@@ -50,17 +50,14 @@ h1, h2, h3 {
     flex-direction: column;
 }
 
-.stTextInput input {
+input[type="text"] {
     border-radius: 15px;
     border: 2px solid #0A2540;
-    padding: 12px;
+    padding: 10px 12px;
     font-size: 15px;
     color: #333333;
-}
-
-.stForm .stTextInput {
-    flex-grow: 1;
-    margin-right: 10px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .stForm .stButton button {
@@ -72,18 +69,13 @@ h1, h2, h3 {
     font-size: 15px;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
+    width: 100%;
+    height: 48px;
 }
 
 .stForm .stButton button:hover {
     background-color: #0A2540;
     color: white;
-}
-
-.stForm {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    justify-content: space-between;
 }
 </style>
 """
@@ -116,9 +108,8 @@ with chat_container:
 
 # User input form
 with st.form(key='chat_form', clear_on_submit=True):
-    cols = st.columns([5, 1])
-    user_query = cols[0].text_input("", placeholder="Ask ODY...", label_visibility="collapsed")
-    submit_button = cols[1].form_submit_button(label='Send ➤')
+    user_query = st.text_input("", placeholder="Ask ODY...", label_visibility="collapsed")
+    submit_button = st.form_submit_button(label='Send ➤')
 
 if submit_button and user_query:
     st.session_state.messages.append(("user", user_query))
