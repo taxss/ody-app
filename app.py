@@ -35,9 +35,9 @@ if 'session_id' not in st.session_state:
 # Chat message display
 for role, msg in st.session_state.messages:
     if role == 'user':
-        st.markdown(f"<div style='text-align: right; background-color:{user_bg}; padding:12px 16px; border-radius:16px; margin:6px 0; font-size:15px; color:{text_color};'>{msg}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='text-align: right; background-color:{user_bg}; padding:12px 16px; border-radius:16px; margin:6px 0; font-size:15px; color:{text_color};'>🧑‍💻 <strong>You:</strong><br>{msg}</div>", unsafe_allow_html=True)
     elif role == 'bot':
-        st.markdown(f"<div style='text-align: left; background-color:{bot_bg}; padding:12px 16px; border-radius:16px; margin:6px 0; font-size:15px; line-height:1.6; color:{text_color};'>{msg}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='text-align: left; background-color:{bot_bg}; padding:12px 16px; border-radius:16px; margin:6px 0; font-size:15px; line-height:1.6; color:{text_color};'>🤖 <strong>ODY:</strong><br>{msg}</div>", unsafe_allow_html=True)
     elif role == 'card':
         st.markdown(msg, unsafe_allow_html=True)
     elif role == 'table':
