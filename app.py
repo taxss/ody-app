@@ -21,7 +21,7 @@ bot_bg = "#333333" if dark_mode else "#F1F0F0"
 st.markdown(f"""
     <div style="text-align: center; background-color: {bg_color}; padding: 1em; border-radius: 10px;">
         <img src="https://companiesmarketcap.com/img/company-logos/256/IHC.AE.png" width="60">
-        <h1 style="margin-bottom: 0; color:{text_color};">ODY Chatbot</h1>
+        <h1 style="margin-bottom: 0; color:{text_color};">ODY Ai</h1>
         <p style="color: gray;">Your gateway to IHC insights</p>
     </div>
 """, unsafe_allow_html=True)
