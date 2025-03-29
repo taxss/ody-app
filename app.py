@@ -2,6 +2,8 @@ import streamlit as st
 import requests
 import uuid
 import json
+import networkx as nx
+import matplotlib.pyplot as plt
 
 # Page config
 st.set_page_config(page_title="ODY Chatbot", layout="centered")
@@ -33,6 +35,14 @@ if 'session_id' not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 if 'is_thinking' not in st.session_state:
     st.session_state.is_thinking = False
+
+# Show thinking banner if needed
+if st.session_state.is_thinking:
+    st.markdown(f"""
+        <div style='background-color:#fffbdd; padding:10px; border-left: 5px solid #ffd43b; margin-bottom:10px;'>
+            🤖 ODY is thinking...
+        </div>
+    """, unsafe_allow_html=True)
 
 # Chat message display
 for role, msg in st.session_state.messages:
@@ -112,6 +122,19 @@ if st.session_state.is_thinking:
                                         <p><a href='{safe_get(company, 'website')}' target='_blank' style='color:{link_color};'>Website</a></p>
                                     </div>
                                 """, unsafe_allow_html=True)
+
+                    elif output_type == "connection_graph":
+                        nodes = parsed.get("nodes", [])
+                        edges = parsed.get("edges", [])
+
+                        G = nx.DiGraph()
+                        G.add_nodes_from(nodes)
+                        G.add_edges_from(edges)
+
+                        fig, ax = plt.subplots()
+                        pos = nx.spring_layout(G)
+                        nx.draw(G, pos, with_labels=True, node_size=3000, node_color="#8faadc", font_size=9, font_weight="bold", edge_color="#555", font_color="black", ax=ax)
+                        st.session_state.messages.append(('graph', fig))
 
                     elif output_type == "table":
                         headers = parsed.get("columns", [])
