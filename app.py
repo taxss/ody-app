@@ -18,6 +18,26 @@ h1, h2, h3 {
     color: #1f2937;
 }
 
+.user-message {
+    background-color: #DCF8C6;
+    border-radius: 12px;
+    padding: 10px 15px;
+    margin: 10px;
+    text-align: right;
+}
+
+.bot-message {
+    background-color: #F1F0F0;
+    border-radius: 12px;
+    padding: 10px 15px;
+    margin: 10px;
+    text-align: left;
+}
+
+.input-area {
+    margin-top: 20px;
+}
+
 .stButton button {
     background-color: #1f2937;
     color: white;
@@ -34,22 +54,6 @@ h1, h2, h3 {
     border-radius: 8px;
 }
 
-[data-testid="stExpander"] {
-    border-radius: 8px;
-    background-color: #f9fafb;
-}
-
-[data-testid="stSidebar"] {
-    background-color: #ffffff;
-}
-
-.chat-message {
-    background-color: #f4f4f6;
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
 </style>
 """
 st.markdown(custom_css, unsafe_allow_html=True)
@@ -60,25 +64,28 @@ if 'session_id' not in st.session_state:
 
 # Header
 st.title("🤖 ODY Chatbot")
-st.subheader("Ask me anything about IHC companies")
+st.caption("Powered by AI | Ask anything about IHC companies")
 
 # Initialize chat history
 if 'messages' not in st.session_state:
     st.session_state.messages = []
 
 # Display chat history
-for message in st.session_state.messages:
-    st.markdown(f"<div class='chat-message'>{message}</div>", unsafe_allow_html=True)
+for sender, message in st.session_state.messages:
+    if sender == "user":
+        st.markdown(f"<div class='user-message'>{message}</div>", unsafe_allow_html=True)
+    else:
+        st.markdown(f"<div class='bot-message'>{message}</div>", unsafe_allow_html=True)
 
-# User input
-user_query = st.text_input("Enter your query:", placeholder="e.g., Who is the CEO of Esyasoft?")
+# Input area
+with st.form(key='chat_form', clear_on_submit=True):
+    user_query = st.text_input("", placeholder="Ask ODY...")
+    submit_button = st.form_submit_button(label='Send 🚀')
 
-# Button to trigger AI response
-if st.button("🔍 Search") and user_query:
-    st.session_state.messages.append(f"You: {user_query}")
+if submit_button and user_query:
+    st.session_state.messages.append(("user", user_query))
 
-    with st.spinner("ODY is thinking..."):
-        # Production Webhook
+    with st.spinner("ODY is typing..."):
         AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook/fc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
 
         try:
@@ -88,12 +95,9 @@ if st.button("🔍 Search") and user_query:
             })
 
             if response.ok:
-                ai_output = response.text  # Direct plain text handling
-                st.session_state.messages.append(f"ODY: {ai_output}")
-
-                # Refresh chat history
+                ai_output = response.text.strip()
+                st.session_state.messages.append(("bot", ai_output))
                 st.rerun()
-
             else:
                 st.error(f"Failed to fetch details: Status code {response.status_code}")
                 st.write(response.text)
