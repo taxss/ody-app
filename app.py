@@ -2,8 +2,6 @@ import streamlit as st
 import requests
 import uuid
 import json
-import networkx as nx
-import matplotlib.pyplot as plt
 
 # Page config
 st.set_page_config(page_title="ODY Chatbot", layout="centered")
@@ -54,8 +52,18 @@ for role, msg in st.session_state.messages:
         st.markdown(msg, unsafe_allow_html=True)
     elif role == 'table':
         st.table(msg)
-    elif role == 'graph':
-        st.pyplot(msg)
+    elif role == 'connection_cards':
+        st.markdown("<div style='overflow-x: auto; white-space: nowrap;'>", unsafe_allow_html=True)
+        for company in msg:
+            st.markdown(f"""
+                <div style='display: inline-block; vertical-align: top; width: 280px; margin: 0 10px 10px 0; border: 1px solid #ccc; border-radius: 12px; background-color: {card_bg}; color: {text_color}; padding: 16px;'>
+                    <h5 style='margin-top: 0; color: {link_color};'>{company.get("name", "Unknown")}</h5>
+                    <p><strong>Location:</strong> {company.get("place", "Unknown")}</p>
+                    <p><strong>Industry:</strong> {company.get("industry", "Unknown")}</p>
+                    <p><strong>Activities:</strong> {company.get("activities", "Unknown")}</p>
+                </div>
+            """, unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # Input form
 with st.form(key="chat_form", clear_on_submit=True):
@@ -124,17 +132,15 @@ if st.session_state.is_thinking:
                                 """, unsafe_allow_html=True)
 
                     elif output_type == "connection_graph":
-                        nodes = parsed.get("nodes", [])
-                        edges = parsed.get("edges", [])
-
-                        G = nx.DiGraph()
-                        G.add_nodes_from(nodes)
-                        G.add_edges_from(edges)
-
-                        fig, ax = plt.subplots()
-                        pos = nx.spring_layout(G)
-                        nx.draw(G, pos, with_labels=True, node_size=3000, node_color="#8faadc", font_size=9, font_weight="bold", edge_color="#555", font_color="black", ax=ax)
-                        st.session_state.messages.append(('graph', fig))
+                        connection_cards = []
+                        for name in parsed.get("nodes", []):
+                            connection_cards.append({
+                                "name": name,
+                                "place": "Unknown",
+                                "industry": "Unknown",
+                                "activities": "Unknown"
+                            })
+                        st.session_state.messages.append(('connection_cards', connection_cards))
 
                     elif output_type == "table":
                         headers = parsed.get("columns", [])
