@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import uuid
 
 # Page config (Call this ONLY ONCE at the very top)
 st.set_page_config(page_title="ODY Chatbot", layout="centered")
@@ -53,6 +54,10 @@ h1, h2, h3 {
 """
 st.markdown(custom_css, unsafe_allow_html=True)
 
+# Generate a unique session key if not exists
+if 'session_id' not in st.session_state:
+    st.session_state.session_id = str(uuid.uuid4())
+
 # Header
 st.title("🤖 ODY Chatbot")
 st.subheader("Ask me anything about IHC companies")
@@ -73,23 +78,25 @@ if st.button("🔍 Search") and user_query:
     st.session_state.messages.append(f"You: {user_query}")
 
     with st.spinner("ODY is thinking..."):
-        #Test Webhook
-        #AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook-test/fc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
-        #Product Webhook
+        # Production Webhook
         AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook/fc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
 
         try:
-            response = requests.post(AI_ENDPOINT_URL, json={"query": user_query})
+            response = requests.post(AI_ENDPOINT_URL, json={
+                "query": user_query,
+                "session_id": st.session_state.session_id
+            })
 
             if response.ok:
                 result = response.json()
 
-                if isinstance(result, list):
-                    ai_output = result[0].get('output', 'No response provided.')
+                # Improved parsing logic to handle various outputs
+                if isinstance(result, list) and len(result) > 0:
+                    ai_output = result[0].get('output', str(result[0]))
                 elif isinstance(result, dict):
-                    ai_output = result.get('output', 'No response provided.')
+                    ai_output = result.get('output', str(result))
                 else:
-                    ai_output = 'Unexpected response format.'
+                    ai_output = str(result)
 
                 st.session_state.messages.append(f"ODY: {ai_output}")
 
