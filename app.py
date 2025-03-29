@@ -74,9 +74,9 @@ if st.button("🔍 Search") and user_query:
 
     with st.spinner("ODY is thinking..."):
         #Test Webhook
-        AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook-test/fc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
+        #AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook-test/fc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
         #Product Webhook
-        #AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook/fc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
+        AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook/fc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
 
         try:
             response = requests.post(AI_ENDPOINT_URL, json={"query": user_query})
