@@ -31,6 +31,16 @@ if 'messages' not in st.session_state:
     st.session_state.messages = []
 if 'session_id' not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
+if 'is_thinking' not in st.session_state:
+    st.session_state.is_thinking = False
+
+# Show thinking banner if needed
+if st.session_state.is_thinking:
+    st.markdown(f"""
+        <div style='background-color:#fffbdd; padding:10px; border-left: 5px solid #ffd43b; margin-bottom:10px;'>
+            🤖 ODY is thinking...
+        </div>
+    """, unsafe_allow_html=True)
 
 # Chat message display
 for role, msg in st.session_state.messages:
@@ -52,12 +62,15 @@ with st.form(key="chat_form", clear_on_submit=True):
 
 if submitted and user_input:
     st.session_state.messages.append(('user', user_input))
+    st.session_state.is_thinking = True
+    st.rerun()
 
+if st.session_state.is_thinking:
     with st.spinner("ODY is thinking..."):
         AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook/fc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
         try:
             response = requests.post(AI_ENDPOINT_URL, json={
-                "query": user_input,
+                "query": st.session_state.messages[-1][1],
                 "session_id": st.session_state.session_id
             })
 
@@ -117,8 +130,11 @@ if submitted and user_input:
                 else:
                     st.session_state.messages.append(("bot", content))
 
+                st.session_state.is_thinking = False
                 st.rerun()
             else:
+                st.session_state.is_thinking = False
                 st.error(f"Error {response.status_code}: {response.text}")
         except Exception as e:
+            st.session_state.is_thinking = False
             st.error(f"Error: {str(e)}")
