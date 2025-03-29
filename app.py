@@ -88,16 +88,7 @@ if st.button("🔍 Search") and user_query:
             })
 
             if response.ok:
-                result = response.json()
-
-                # Improved parsing logic to handle various outputs
-                if isinstance(result, list) and len(result) > 0:
-                    ai_output = result[0].get('output', str(result[0]))
-                elif isinstance(result, dict):
-                    ai_output = result.get('output', str(result))
-                else:
-                    ai_output = str(result)
-
+                ai_output = response.text  # Direct plain text handling
                 st.session_state.messages.append(f"ODY: {ai_output}")
 
                 # Refresh chat history
