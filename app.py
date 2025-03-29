@@ -4,7 +4,7 @@ import uuid
 import json
 
 # Page config
-st.set_page_config(page_title="ODY Chatbot", layout="centered")
+st.set_page_config(page_title="ODY ai", layout="centered")
 
 # Dark/Light mode toggle
 mode = st.sidebar.radio("Theme", ["Dark", "Light"])
