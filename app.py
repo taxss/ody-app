@@ -1,6 +1,50 @@
 import streamlit as st
 import requests
 
+# Page config
+st.set_page_config(page_title="ODY Chatbot", layout="centered")
+
+# Insert custom CSS directly here
+custom_css = """
+<style>
+body, .stApp {
+    background-color: #ffffff;
+    color: #333333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+h1, h2, h3 {
+    color: #1f2937;
+}
+
+.stButton button {
+    background-color: #1f2937;
+    color: white;
+    border-radius: 8px;
+    padding: 8px 16px;
+}
+
+.stButton button:hover {
+    background-color: #374151;
+    color: white;
+}
+
+.stTextInput input {
+    border-radius: 8px;
+}
+
+[data-testid="stExpander"] {
+    border-radius: 8px;
+    background-color: #f9fafb;
+}
+
+[data-testid="stSidebar"] {
+    background-color: #ffffff;
+}
+</style>
+"""
+# Include the CSS in your app
+st.markdown(custom_css, unsafe_allow_html=True)
 # App config
 st.set_page_config(page_title="ODY Chatbot", layout="centered")
 
@@ -15,7 +59,7 @@ user_query = st.text_input("Enter your query:", placeholder="e.g., Who is the CE
 if st.button("🔍 Search") and user_query:
     with st.spinner("ODY is thinking..."):
         # Replace this with your actual AI-n8n endpoint
-        AI_ENDPOINT_URL = "YOUR_N8N_WEBHOOK_URL"
+        AI_ENDPOINT_URL = "Yfc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
         
         # Call AI to get structured response
         response = requests.post(AI_ENDPOINT_URL, json={"query": user_query})
@@ -44,3 +88,4 @@ if st.button("🔍 Search") and user_query:
 
         else:
             st.error("Failed to fetch details from AI service.")
+
