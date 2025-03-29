@@ -83,11 +83,19 @@ if st.button("🔍 Search") and user_query:
 
             if response.ok:
                 result = response.json()
-                ai_output = result.get('output', 'No response provided.')
+
+                if isinstance(result, list):
+                    ai_output = result[0].get('output', 'No response provided.')
+                elif isinstance(result, dict):
+                    ai_output = result.get('output', 'No response provided.')
+                else:
+                    ai_output = 'Unexpected response format.'
+
                 st.session_state.messages.append(f"ODY: {ai_output}")
 
                 # Refresh chat history
                 st.experimental_rerun()
+
             else:
                 st.error(f"Failed to fetch details: Status code {response.status_code}")
                 st.write(response.text)
