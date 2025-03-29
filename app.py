@@ -69,13 +69,13 @@ if submitted and user_input:
 
                     elif output_type == "company_card":
                         html = f"""
-                        <div style='border:1px solid #ccc; padding:16px; border-radius:12px; background:#ffffff; font-size:15px;'>
-                            <h4 style='margin-top: 0;'>{parsed['company_name']}</h4>
+                        <div style='border:1px solid #333; padding:18px 20px; border-radius:12px; background-color:#f0f0f0; color:#111; font-family:sans-serif; line-height:1.6; font-size:15px;'>
+                            <h4 style='margin-top: 0; color:#0A2540; font-size:18px;'>{parsed['company_name']}</h4>
                             <p><strong>ID:</strong> {parsed['company_id']}</p>
                             <p><strong>Location:</strong> {parsed['place']}</p>
                             <p><strong>Industry:</strong> {parsed['industry']}</p>
                             <p><strong>Activities:</strong> {parsed['activities']}</p>
-                            <p><strong>Website:</strong> <a href="{parsed['website']}" target="_blank">{parsed['website']}</a></p>
+                            <p><strong>Website:</strong> <a href="{parsed['website']}" target="_blank" style="color:#1a0dab;">{parsed['website']}</a></p>
                             <p><strong>Parent:</strong> {parsed['parent_company']['name']} (ID: {parsed['parent_company']['id']})</p>
                         </div>
                         """
@@ -86,7 +86,7 @@ if submitted and user_input:
                         for i, company in enumerate(parsed['companies']):
                             with cols[i % len(cols)]:
                                 st.markdown(f"""
-                                    <div style='border:1px solid #ddd; padding:14px; border-radius:12px; font-size:14px;'>
+                                    <div style='border:1px solid #ddd; padding:14px; border-radius:12px; font-size:14px; background-color:#f0f0f0; color:#111;'>
                                         <h5 style='margin-top:0;'>{company['name']}</h5>
                                         <p><strong>Country:</strong> {company['country']}</p>
                                         <p><strong>Industry:</strong> {company['industry']}</p>
