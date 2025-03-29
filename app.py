@@ -82,7 +82,6 @@ if st.button("🔍 Search") and user_query:
                 st.write(f"**Company ID:** {data.get('company_id', 'N/A')}")
                 parent = data.get('parent_company_id', 'N/A') or 'N/A'
                 st.write(f"**Parent Company ID:** {parent}")
-
             else:
                 st.error(f"Failed to fetch details: Status code {response.status_code}")
                 st.write(response.text)
