@@ -2,8 +2,6 @@ import streamlit as st
 import requests
 import uuid
 import json
-import networkx as nx
-import matplotlib.pyplot as plt
 
 # Page config
 st.set_page_config(page_title="ODY Chatbot", layout="centered")
@@ -26,9 +24,9 @@ if 'session_id' not in st.session_state:
 # Chat message display
 for role, msg in st.session_state.messages:
     if role == 'user':
-        st.markdown(f"<div style='text-align: right; background-color:#DCF8C6; padding:10px; border-radius:10px; margin:5px 0;'>{msg}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='text-align: right; background-color:#DCF8C6; padding:12px 16px; border-radius:16px; margin:6px 0; font-size:15px;'>{msg}</div>", unsafe_allow_html=True)
     elif role == 'bot':
-        st.markdown(f"<div style='text-align: left; background-color:#F1F0F0; padding:10px; border-radius:10px; margin:5px 0;'>{msg}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='text-align: left; background-color:#F1F0F0; padding:12px 16px; border-radius:16px; margin:6px 0; font-size:15px; line-height:1.6;'>{msg}</div>", unsafe_allow_html=True)
     elif role == 'card':
         st.markdown(msg, unsafe_allow_html=True)
     elif role == 'table':
@@ -71,8 +69,8 @@ if submitted and user_input:
 
                     elif output_type == "company_card":
                         html = f"""
-                        <div style='border:1px solid #ccc; padding:15px; border-radius:10px; background:#fff;'>
-                            <h4>{parsed['company_name']}</h4>
+                        <div style='border:1px solid #ccc; padding:16px; border-radius:12px; background:#ffffff; font-size:15px;'>
+                            <h4 style='margin-top: 0;'>{parsed['company_name']}</h4>
                             <p><strong>ID:</strong> {parsed['company_id']}</p>
                             <p><strong>Location:</strong> {parsed['place']}</p>
                             <p><strong>Industry:</strong> {parsed['industry']}</p>
@@ -88,8 +86,8 @@ if submitted and user_input:
                         for i, company in enumerate(parsed['companies']):
                             with cols[i % len(cols)]:
                                 st.markdown(f"""
-                                    <div style='border:1px solid #ddd; padding:10px; border-radius:10px;'>
-                                        <h5>{company['name']}</h5>
+                                    <div style='border:1px solid #ddd; padding:14px; border-radius:12px; font-size:14px;'>
+                                        <h5 style='margin-top:0;'>{company['name']}</h5>
                                         <p><strong>Country:</strong> {company['country']}</p>
                                         <p><strong>Industry:</strong> {company['industry']}</p>
                                         <p>{company['activities']}</p>
@@ -102,17 +100,6 @@ if submitted and user_input:
                         rows = parsed.get("rows", [])
                         table_data = [dict(zip(headers, row)) for row in rows]
                         st.session_state.messages.append(('table', table_data))
-
-                    elif output_type == "connection_graph":
-                        G = nx.DiGraph()
-                        for node in parsed["nodes"]:
-                            G.add_node(node)
-                        for edge in parsed["edges"]:
-                            G.add_edge(*edge)
-                        fig, ax = plt.subplots()
-                        pos = nx.spring_layout(G)
-                        nx.draw(G, pos, with_labels=True, node_color="#AED6F1", node_size=2000, font_size=10, arrows=True, ax=ax)
-                        st.session_state.messages.append(('graph', fig))
 
                     else:
                         st.session_state.messages.append(("bot", content))
