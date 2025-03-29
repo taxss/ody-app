@@ -34,14 +34,6 @@ if 'session_id' not in st.session_state:
 if 'is_thinking' not in st.session_state:
     st.session_state.is_thinking = False
 
-# Show thinking banner if needed
-if st.session_state.is_thinking:
-    st.markdown(f"""
-        <div style='background-color:#fffbdd; padding:10px; border-left: 5px solid #ffd43b; margin-bottom:10px;'>
-            🤖 ODY is thinking...
-        </div>
-    """, unsafe_allow_html=True)
-
 # Chat message display
 for role, msg in st.session_state.messages:
     if role == 'user':
