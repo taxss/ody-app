@@ -47,12 +47,16 @@ for role, msg in st.session_state.messages:
     elif role == 'connection_cards':
         st.markdown("<div style='overflow-x: auto; white-space: nowrap;'>", unsafe_allow_html=True)
         for company in msg:
+            name = company.get("name", "Unknown")
+            place = company.get("place", "Unknown")
+            industry = company.get("industry", "Unknown")
+            activities = company.get("activities", "Unknown")
             st.markdown(f"""
                 <div style='display: inline-block; vertical-align: top; width: 280px; margin: 0 10px 10px 0; border: 1px solid #ccc; border-radius: 12px; background-color: {card_bg}; color: {text_color}; padding: 16px;'>
-                    <h5 style='margin-top: 0; color: {link_color};'>{company.get("name", "Unknown")}</h5>
-                    <p><strong>Location:</strong> {company.get("place", "Unknown")}</p>
-                    <p><strong>Industry:</strong> {company.get("industry", "Unknown")}</p>
-                    <p><strong>Activities:</strong> {company.get("activities", "Unknown")}</p>
+                    <h5 style='margin-top: 0; color: {link_color};'>{name}</h5>
+                    <p><strong>Location:</strong> {place}</p>
+                    <p><strong>Industry:</strong> {industry}</p>
+                    <p><strong>Activities:</strong> {activities}</p>
                 </div>
             """, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
@@ -80,7 +84,6 @@ if st.session_state.is_thinking:
                 result = response.json()
                 content = result.get("output", "No response provided.").replace("\\n", "\n")
 
-                # Try to parse JSON inside the content
                 parsed = None
                 try:
                     parsed = json.loads(content.split("```json")[-1].split("```")[-2])
@@ -124,14 +127,7 @@ if st.session_state.is_thinking:
                                 """, unsafe_allow_html=True)
 
                     elif output_type == "connection_graph":
-                        connection_cards = []
-                        for name in parsed.get("nodes", []):
-                            connection_cards.append({
-                                "name": name,
-                                "place": "Unknown",
-                                "industry": "Unknown",
-                                "activities": "Unknown"
-                            })
+                        connection_cards = sorted(parsed.get("nodes", []), key=lambda c: c.get("name", ""))
                         st.session_state.messages.append(('connection_cards', connection_cards))
 
                     elif output_type == "table":
