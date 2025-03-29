@@ -5,7 +5,7 @@ import uuid
 # Page config (Call this ONLY ONCE at the very top)
 st.set_page_config(page_title="ODY Chatbot", layout="centered")
 
-# Insert custom CSS directly here
+# Custom CSS for refined UI
 custom_css = """
 <style>
 body, .stApp {
@@ -18,68 +18,66 @@ h1, h2, h3 {
     color: #0A2540;
 }
 
+.logo {
+    width: 50px;
+    margin-bottom: 15px;
+}
+
 .user-message {
-    background-color: #E0F0FF;
-    border-radius: 15px;
-    padding: 12px 18px;
-    margin: 10px;
-    text-align: right;
-    display: inline-block;
-    max-width: 80%;
+    background-color: #DCF8C6;
+    color: #333333;
+    border-radius: 18px;
+    padding: 10px 15px;
+    margin: 8px 0;
+    max-width: 75%;
+    align-self: flex-end;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .bot-message {
-    background-color: #F4F4F8;
+    background-color: #F1F0F0;
+    color: #333333;
+    border-radius: 18px;
+    padding: 10px 15px;
+    margin: 8px 0;
+    max-width: 75%;
+    align-self: flex-start;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.message-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.stTextInput input {
     border-radius: 15px;
-    padding: 12px 18px;
-    margin: 10px;
-    text-align: left;
-    display: inline-block;
-    max-width: 80%;
-}
-
-.chat-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.user-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-.input-area {
-    margin-top: 20px;
+    border: 2px solid #0A2540;
+    padding: 12px;
+    font-size: 15px;
 }
 
 .stButton button {
     background-color: #0A2540;
     color: white;
-    border-radius: 12px;
+    border-radius: 15px;
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 15px;
     border: none;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .stButton button:hover {
     background-color: #073763;
 }
 
-.stTextInput input {
-    border-radius: 12px;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
+.stForm {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.logo {
-    width: 50px;
-    height: auto;
-    margin-bottom: 10px;
-}
 </style>
 """
 st.markdown(custom_css, unsafe_allow_html=True)
@@ -88,7 +86,7 @@ st.markdown(custom_css, unsafe_allow_html=True)
 if 'session_id' not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 
-# Header with logo
+# Header with ODY logo
 st.markdown(
     "<img class='logo' src='https://companiesmarketcap.com/img/company-logos/256/IHC.AE.png'>",
     unsafe_allow_html=True
@@ -100,17 +98,20 @@ st.caption("Powered by AI | Ask anything about IHC companies")
 if 'messages' not in st.session_state:
     st.session_state.messages = []
 
-# Display chat history
-for sender, message in st.session_state.messages:
-    if sender == "user":
-        st.markdown(f"<div class='user-container'><div class='user-message'>{message}</div></div>", unsafe_allow_html=True)
-    else:
-        st.markdown(f"<div class='chat-container'><div class='bot-message'>{message}</div></div>", unsafe_allow_html=True)
+# Display chat history clearly aligned
+chat_container = st.container()
+with chat_container:
+    for sender, message in st.session_state.messages:
+        if sender == "user":
+            st.markdown(f"<div class='message-container'><div class='user-message'>{message}</div></div>", unsafe_allow_html=True)
+        else:
+            st.markdown(f"<div class='message-container'><div class='bot-message'>{message}</div></div>", unsafe_allow_html=True)
 
-# Input area
+# User input form
 with st.form(key='chat_form', clear_on_submit=True):
-    user_query = st.text_input("", placeholder="Ask ODY...")
-    submit_button = st.form_submit_button(label='Send ➤')
+    cols = st.columns([4, 1])
+    user_query = cols[0].text_input("", placeholder="Ask ODY...", label_visibility="collapsed")
+    submit_button = cols[1].form_submit_button(label='Send ➤')
 
 if submit_button and user_query:
     st.session_state.messages.append(("user", user_query))
