@@ -56,7 +56,7 @@ user_query = st.text_input("Enter your query:", placeholder="e.g., Who is the CE
 if st.button("🔍 Search") and user_query:
     with st.spinner("ODY is thinking..."):
         # Replace this with your actual AI-n8n endpoint (Ensure it's a valid URL)
-        AI_ENDPOINT_URL = "https://your-n8n-endpoint-url.com/Yfc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
+        AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook-test/fc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
         
         # Call AI to get structured response
         response = requests.post(AI_ENDPOINT_URL, json={"query": user_query})
