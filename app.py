@@ -41,6 +41,14 @@ h1, h2, h3 {
 [data-testid="stSidebar"] {
     background-color: #ffffff;
 }
+
+.chat-message {
+    background-color: #f4f4f6;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
 </style>
 """
 st.markdown(custom_css, unsafe_allow_html=True)
@@ -49,25 +57,34 @@ st.markdown(custom_css, unsafe_allow_html=True)
 st.title("🤖 ODY Chatbot")
 st.subheader("Ask me anything about IHC companies")
 
+# Initialize chat history
+if 'messages' not in st.session_state:
+    st.session_state.messages = []
+
+# Display chat history
+for message in st.session_state.messages:
+    st.markdown(f"<div class='chat-message'>{message}</div>", unsafe_allow_html=True)
+
 # User input
 user_query = st.text_input("Enter your query:", placeholder="e.g., Who is the CEO of Esyasoft?")
 
 # Button to trigger AI response
 if st.button("🔍 Search") and user_query:
+    st.session_state.messages.append(f"You: {user_query}")
+
     with st.spinner("ODY is thinking..."):
-        # Replace this with your actual AI-n8n endpoint (Ensure it's a valid URL)
         AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook-test/fc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
-        
+
         try:
             response = requests.post(AI_ENDPOINT_URL, json={"query": user_query})
 
             if response.ok:
                 result = response.json()
-                
-                # Display raw response
-                st.success("Here's the response from ODY:")
-                st.json(result)
+                ai_output = result.get('output', 'No response provided.')
+                st.session_state.messages.append(f"ODY: {ai_output}")
 
+                # Refresh chat history
+                st.experimental_rerun()
             else:
                 st.error(f"Failed to fetch details: Status code {response.status_code}")
                 st.write(response.text)
