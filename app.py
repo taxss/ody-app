@@ -83,13 +83,12 @@ if st.session_state.is_thinking:
             if response.ok:
                 result = response.json()
                 content = result.get("output", "No response provided.").replace("\\n", "\n")
-                intro_text = content.split("```json")[0].strip()
-                if intro_text:
-                    st.session_state.messages.append(("bot", intro_text))
-                    
+
                 parsed = None
+                intro_text = ""
                 try:
-                    parsed = json.loads(content.split("```json")[-1].split("```")[-2])
+                    intro_text = content.split("```json")[0].strip()
+                    parsed = json.loads(content.split("```json")[1].split("```")[0])
                 except:
                     pass
 
@@ -97,6 +96,9 @@ if st.session_state.is_thinking:
                     return data.get(key) if data.get(key) else "Unknown"
 
                 if parsed and isinstance(parsed, dict):
+                    if intro_text:
+                        st.session_state.messages.append(("bot", intro_text))
+
                     output_type = parsed.get("type")
 
                     if output_type == "text":
@@ -142,7 +144,8 @@ if st.session_state.is_thinking:
                     else:
                         st.session_state.messages.append(("bot", content))
                 else:
-                    st.session_state.messages.append(("bot", content))
+                    # No structured data detected, show content once
+                    st.session_state.messages.append(("bot", content.strip()))
 
                 st.session_state.is_thinking = False
                 st.rerun()
