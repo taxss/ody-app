@@ -61,9 +61,9 @@ input[type="text"] {
 }
 
 .stForm .stButton button {
-    background-color: #ffffff;
-    color: #333333;
-    border: 2px solid #0A2540;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
     border-radius: 15px;
     padding: 10px 20px;
     font-size: 15px;
@@ -74,8 +74,8 @@ input[type="text"] {
 }
 
 .stForm .stButton button:hover {
-    background-color: #0A2540;
-    color: white;
+    background-color: #000000 !important;
+    color: #ffffff !important;
 }
 </style>
 """
