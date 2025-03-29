@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-# Page config
+# Page config (Call this ONLY ONCE at the very top)
 st.set_page_config(page_title="ODY Chatbot", layout="centered")
 
 # Insert custom CSS directly here
@@ -43,10 +43,7 @@ h1, h2, h3 {
 }
 </style>
 """
-# Include the CSS in your app
 st.markdown(custom_css, unsafe_allow_html=True)
-# App config
-st.set_page_config(page_title="ODY Chatbot", layout="centered")
 
 # Header
 st.title("🤖 ODY Chatbot")
@@ -58,8 +55,8 @@ user_query = st.text_input("Enter your query:", placeholder="e.g., Who is the CE
 # Button to trigger AI response
 if st.button("🔍 Search") and user_query:
     with st.spinner("ODY is thinking..."):
-        # Replace this with your actual AI-n8n endpoint
-        AI_ENDPOINT_URL = "Yfc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
+        # Replace this with your actual AI-n8n endpoint (Ensure it's a valid URL)
+        AI_ENDPOINT_URL = "https://your-n8n-endpoint-url.com/Yfc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
         
         # Call AI to get structured response
         response = requests.post(AI_ENDPOINT_URL, json={"query": user_query})
@@ -88,4 +85,3 @@ if st.button("🔍 Search") and user_query:
 
         else:
             st.error("Failed to fetch details from AI service.")
-
