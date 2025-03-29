@@ -60,20 +60,18 @@ input[type="text"] {
     box-sizing: border-box;
 }
 
-.stForm .stButton button {
+button[kind="primary"] {
     background-color: #ffffff !important;
     color: #000000 !important;
     border: 2px solid #000000 !important;
-    border-radius: 15px;
-    padding: 10px 20px;
-    font-size: 15px;
-    cursor: pointer;
+    border-radius: 15px !important;
+    padding: 10px 20px !important;
+    font-size: 15px !important;
+    cursor: pointer !important;
     transition: background-color 0.3s ease, color 0.3s ease;
-    width: 100%;
-    height: 48px;
 }
 
-.stForm .stButton button:hover {
+button[kind="primary"]:hover {
     background-color: #000000 !important;
     color: #ffffff !important;
 }
