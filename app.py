@@ -58,30 +58,19 @@ if st.button("🔍 Search") and user_query:
         # Replace this with your actual AI-n8n endpoint (Ensure it's a valid URL)
         AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook-test/fc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
         
-        # Call AI to get structured response
-        response = requests.post(AI_ENDPOINT_URL, json={"query": user_query})
+        try:
+            response = requests.post(AI_ENDPOINT_URL, json={"query": user_query})
 
-        if response.ok:
-            data = response.json()
-            
-            # Display structured output
-            st.success("Here's what I found:")
+            if response.ok:
+                result = response.json()
+                
+                # Display raw response
+                st.success("Here's the response from ODY:")
+                st.json(result)
 
-            st.markdown(f"**Company Name:** {data.get('company_name', 'N/A')}")
-            st.markdown(f"**Location:** {data.get('place', 'N/A')}")
-            st.markdown(f"**Principal Activities:** {data.get('principal_activities', 'N/A')}")
-            st.markdown(f"**Industry:** {data.get('industry', 'N/A')}")
-
-            if data.get('website_url'):
-                st.markdown(f"**Website:** [Link]({data['website_url']})")
-            else:
-                st.markdown("**Website:** N/A")
-
-            # Optional IDs
-            with st.expander("🔑 Company IDs"):
-                st.write(f"**Company ID:** {data.get('company_id', 'N/A')}")
-                parent = data.get('parent_company_id', 'N/A') or 'N/A'
-                st.write(f"**Parent Company ID:** {parent}")
             else:
                 st.error(f"Failed to fetch details: Status code {response.status_code}")
                 st.write(response.text)
+
+        except Exception as e:
+            st.error(f"An error occurred: {str(e)}")
