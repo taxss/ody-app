@@ -34,14 +34,6 @@ if 'session_id' not in st.session_state:
 if 'is_thinking' not in st.session_state:
     st.session_state.is_thinking = False
 
-# Show thinking banner if needed
-if st.session_state.is_thinking:
-    st.markdown(f"""
-        <div style='background-color:#fffbdd; padding:10px; border-left: 5px solid #ffd43b; margin-bottom:10px;'>
-            🤖 ODY is thinking...
-        </div>
-    """, unsafe_allow_html=True)
-
 # Chat message display
 for role, msg in st.session_state.messages:
     if role == 'user':
@@ -85,6 +77,9 @@ if st.session_state.is_thinking:
                 except:
                     pass
 
+                def safe_get(data, key):
+                    return data.get(key) if data.get(key) else "Unknown"
+
                 if parsed and isinstance(parsed, dict):
                     output_type = parsed.get("type")
 
@@ -94,13 +89,12 @@ if st.session_state.is_thinking:
                     elif output_type == "company_card":
                         html = f"""
                         <div style='border:1px solid #666; padding:18px 20px; border-radius:12px; background-color:{card_bg}; color:{text_color}; font-family:sans-serif; line-height:1.6; font-size:15px;'>
-                            <h4 style='margin-top: 0; color:{link_color}; font-size:18px;'>{parsed['company_name']}</h4>
-                            <p><strong>ID:</strong> {parsed['company_id']}</p>
-                            <p><strong>Location:</strong> {parsed['place']}</p>
-                            <p><strong>Industry:</strong> {parsed['industry']}</p>
-                            <p><strong>Activities:</strong> {parsed['activities']}</p>
-                            <p><strong>Website:</strong> <a href="{parsed['website']}" target="_blank" style="color:{link_color};">{parsed['website']}</a></p>
-                            <p><strong>Parent:</strong> {parsed['parent_company']['name']} (ID: {parsed['parent_company']['id']})</p>
+                            <h4 style='margin-top: 0; color:{link_color}; font-size:18px;'>{safe_get(parsed, 'company_name')}</h4>
+                            <p><strong>Location:</strong> {safe_get(parsed, 'place')}</p>
+                            <p><strong>Industry:</strong> {safe_get(parsed, 'industry')}</p>
+                            <p><strong>Activities:</strong> {safe_get(parsed, 'activities')}</p>
+                            <p><strong>Website:</strong> <a href="{safe_get(parsed, 'website')}" target="_blank" style="color:{link_color};">{safe_get(parsed, 'website')}</a></p>
+                            <p><strong>Parent:</strong> {safe_get(parsed.get('parent_company', {}), 'name')}</p>
                         </div>
                         """
                         st.session_state.messages.append(('card', html))
@@ -111,11 +105,11 @@ if st.session_state.is_thinking:
                             with cols[i % len(cols)]:
                                 st.markdown(f"""
                                     <div style='border:1px solid #ddd; padding:14px; border-radius:12px; font-size:14px; background-color:{card_bg}; color:{text_color};'>
-                                        <h5 style='margin-top:0; color:{link_color};'>{company['name']}</h5>
-                                        <p><strong>Country:</strong> {company['country']}</p>
-                                        <p><strong>Industry:</strong> {company['industry']}</p>
-                                        <p>{company['activities']}</p>
-                                        <p><a href='{company['website']}' target='_blank' style='color:{link_color};'>Website</a></p>
+                                        <h5 style='margin-top:0; color:{link_color};'>{safe_get(company, 'name')}</h5>
+                                        <p><strong>Country:</strong> {safe_get(company, 'country')}</p>
+                                        <p><strong>Industry:</strong> {safe_get(company, 'industry')}</p>
+                                        <p>{safe_get(company, 'activities')}</p>
+                                        <p><a href='{safe_get(company, 'website')}' target='_blank' style='color:{link_color};'>Website</a></p>
                                     </div>
                                 """, unsafe_allow_html=True)
 
