@@ -55,29 +55,36 @@ h1, h2, h3 {
     border: 2px solid #0A2540;
     padding: 12px;
     font-size: 15px;
+    color: #333333;
 }
 
-.stButton button {
-    background-color: #0A2540;
-    color: white;
+.stForm .stTextInput {
+    flex-grow: 1;
+    margin-right: 10px;
+}
+
+.stForm .stButton button {
+    background-color: #ffffff;
+    color: #333333;
+    border: 2px solid #0A2540;
     border-radius: 15px;
     padding: 10px 20px;
     font-size: 15px;
-    border: none;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.stButton button:hover {
-    background-color: #073763;
+.stForm .stButton button:hover {
+    background-color: #0A2540;
+    color: white;
 }
 
 .stForm {
     display: flex;
+    gap: 10px;
     align-items: center;
     justify-content: space-between;
 }
-
 </style>
 """
 st.markdown(custom_css, unsafe_allow_html=True)
@@ -109,7 +116,7 @@ with chat_container:
 
 # User input form
 with st.form(key='chat_form', clear_on_submit=True):
-    cols = st.columns([4, 1])
+    cols = st.columns([5, 1])
     user_query = cols[0].text_input("", placeholder="Ask ODY...", label_visibility="collapsed")
     submit_button = cols[1].form_submit_button(label='Send ➤')
 
