@@ -60,20 +60,20 @@ input[type="text"] {
     box-sizing: border-box;
 }
 
-/* Fixing the Streamlit button styling */
-button[data-testid="baseButton-secondary"] {
-    background-color: #ffffff;
-    color: #000000;
-    border: 2px solid #000000;
-    border-radius: 15px;
-    padding: 10px 20px;
-    font-size: 15px;
+/* Forcefully override the submit button */
+.stForm button[type="submit"] {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
+    border-radius: 15px !important;
+    padding: 10px 20px !important;
+    font-size: 15px !important;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-button[data-testid="baseButton-secondary"]:hover {
-    background-color: #000000;
-    color: #ffffff;
+.stForm button[type="submit"]:hover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
 }
 </style>
 """
