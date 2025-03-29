@@ -83,7 +83,10 @@ if st.session_state.is_thinking:
             if response.ok:
                 result = response.json()
                 content = result.get("output", "No response provided.").replace("\\n", "\n")
-
+                intro_text = content.split("```json")[0].strip()
+                if intro_text:
+                    st.session_state.messages.append(("bot", intro_text))
+                    
                 parsed = None
                 try:
                     parsed = json.loads(content.split("```json")[-1].split("```")[-2])
