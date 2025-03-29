@@ -94,7 +94,7 @@ if st.button("🔍 Search") and user_query:
                 st.session_state.messages.append(f"ODY: {ai_output}")
 
                 # Refresh chat history
-                st.experimental_rerun()
+                st.rerun()
 
             else:
                 st.error(f"Failed to fetch details: Status code {response.status_code}")
