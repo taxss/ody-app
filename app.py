@@ -73,9 +73,6 @@ if submitted and user_input:
 
 if st.session_state.is_thinking:
     with st.spinner("ODY is thinking..."):
-        ##Ody 1.0
-        ##AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook/fc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
-        ##Ody 2.0
         AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook/99295e6e-0eec-4189-8501-78a425c5ebe0"
         try:
             response = requests.post(AI_ENDPOINT_URL, json={
@@ -88,12 +85,11 @@ if st.session_state.is_thinking:
                 content = result.get("output", "No response provided.").replace("\\n", "\n")
 
                 parsed = None
-                intro_text = ""
                 try:
-                    intro_text = content.split("```json")[0].strip()
-                    parsed = json.loads(content.split("```json")[1].split("```")[0])
-                except:
-                    pass
+                    parsed = json.loads(content)
+                    intro_text = ""
+                except json.JSONDecodeError:
+                    intro_text = content.strip()
 
                 def safe_get(data, key):
                     return data.get(key) if data.get(key) else "Unknown"
@@ -147,8 +143,8 @@ if st.session_state.is_thinking:
                     else:
                         st.session_state.messages.append(("bot", content))
                 else:
-                    # No structured data detected, show content once
-                    st.session_state.messages.append(("bot", content.strip()))
+                    # If parsing failed, fallback to showing clean text
+                    st.session_state.messages.append(("bot", intro_text if intro_text else content.strip()))
 
                 st.session_state.is_thinking = False
                 st.rerun()
