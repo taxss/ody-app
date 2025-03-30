@@ -85,11 +85,21 @@ if st.session_state.is_thinking:
                 content = result.get("output", "No response provided.").replace("\\n", "\n")
 
                 parsed = None
+                intro_text = ""
+                
                 try:
-                    parsed = json.loads(content)
-                    intro_text = ""
+                    # Try to extract the first JSON object from the text
+                    start = content.find('{')
+                    end = content.rfind('}') + 1
+                    if start != -1 and end != -1:
+                        json_part = content[start:end]
+                        parsed = json.loads(json_part)
+                        intro_text = content[:start].strip()
+                    else:
+                        intro_text = content.strip()
                 except json.JSONDecodeError:
                     intro_text = content.strip()
+
 
                 def safe_get(data, key):
                     return data.get(key) if data.get(key) else "Unknown"
