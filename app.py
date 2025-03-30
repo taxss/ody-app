@@ -76,7 +76,7 @@ if st.session_state.is_thinking:
         ##Ody 1.0
         ##AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook/fc4d4829-f74d-42d9-9dd7-103fd2ecdb1c"
         ##Ody 2.0
-        AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook-test/99295e6e-0eec-4189-8501-78a425c5ebe0"
+        AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook/99295e6e-0eec-4189-8501-78a425c5ebe0"
         try:
             response = requests.post(AI_ENDPOINT_URL, json={
                 "query": st.session_state.messages[-1][1],
