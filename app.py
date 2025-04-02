@@ -3,7 +3,7 @@ import requests
 import uuid
 import json
 import time
-import itertools
+import random
 
 # Page config
 st.set_page_config(page_title="ODY ai", layout="centered")
@@ -39,7 +39,7 @@ if 'is_thinking' not in st.session_state:
 # Chat message display
 for role, msg in st.session_state.messages:
     if role == 'user':
-        st.markdown(f"<div style='text-align: right; background-color:{user_bg}; padding:12px 16px; border-radius:16px; margin:6px 0; font-size:15px; color:{text_color};'>🧑‍💻 <strong>Þú:</strong><br>{msg}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='text-align: right; background-color:{user_bg}; padding:12px 16px; border-radius:16px; margin:6px 0; font-size:15px; color:{text_color};'>🧑‍💻 <strong>You:</strong><br>{msg}</div>", unsafe_allow_html=True)
     elif role == 'bot':
         st.markdown(f"<div style='text-align: left; background-color:{bot_bg}; padding:12px 16px; border-radius:16px; margin:6px 0; font-size:15px; line-height:1.6; color:{text_color};'>🤖 <strong>ODY:</strong><br>{msg}</div>", unsafe_allow_html=True)
     elif role == 'card':
@@ -73,7 +73,6 @@ if submitted and user_input:
     st.session_state.is_thinking = True
     st.rerun()
 
-# Custom Icelandic seafood loading spinner
 if st.session_state.is_thinking:
     loading_messages = [
         "Tékka á skötuselnum...",
@@ -87,20 +86,9 @@ if st.session_state.is_thinking:
         "Að skoða hvort saltfiskurinn sé kominn í útflutning...",
         "Athuga hvort laxinn sé ofmetinn eða vanmetinn..."
     ]
-
     status_box = st.empty()
-    spinner_cycle = itertools.cycle(loading_messages)
+    status_box.info(random.choice(loading_messages))
 
-    def show_loading():
-        for msg in spinner_cycle:
-            if not st.session_state.is_thinking:
-                break
-            status_box.info(msg)
-            time.sleep(2.5)
-
-    show_loading()
-
-    # Actual request while loading spinner is running
     AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook/8eefae91-c4e0-4c5d-8d62-69c6c068287c"
     try:
         response = requests.post(AI_ENDPOINT_URL, json={
