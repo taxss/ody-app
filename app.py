@@ -19,7 +19,7 @@ bot_bg = "#333333" if dark_mode else "#F1F0F0"
 
 # Logo and title
 st.markdown(f"""
-    <div style="text-align: center; background-color: {bg_color}; padding: 1em; border-radius: 10px;">
+    <div style="text-align: center; background-color: {bg_color}; padding: 1em; border-radius: 50px;">
         <img src="https://images.prismic.io/icelandic/dca19f53-0f5e-4a8c-857e-c4a14211aa40_icelandic_corporate_logo_01.png?auto=compress,format" width="60">
         <h1 style="margin-bottom: 0; color:{text_color};">ODY Ai</h1>
         <p style="color: gray;">Take the pulse on your stock</p>
