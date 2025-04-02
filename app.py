@@ -73,7 +73,7 @@ if submitted and user_input:
 
 if st.session_state.is_thinking:
     with st.spinner("ODY is thinking..."):
-        AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook/99295e6e-0eec-4189-8501-78a425c5ebe0"
+        AI_ENDPOINT_URL = "https://timoleon.app.n8n.cloud/webhook/e104e40e-6134-4825-a6f0-8a646d882662/chat"
         try:
             response = requests.post(AI_ENDPOINT_URL, json={
                 "query": st.session_state.messages[-1][1],
