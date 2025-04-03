@@ -22,7 +22,7 @@ st.markdown(f"""
     <div style="text-align: center; background-color: {bg_color}; padding: 1em; border-radius: 50px;">
         <img src="https://images.prismic.io/icelandic/dca19f53-0f5e-4a8c-857e-c4a14211aa40_icelandic_corporate_logo_01.png?auto=compress,format" width="300">
         <h1 style="margin-bottom: 0; color:{text_color};">ODY Ai</h1>
-        <p style="color: gray;">Alltaf gott að taka stöðuna!</p>
+        <p style="color: gray;">Know what the state of your stock is!</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -64,7 +64,7 @@ for role, msg in st.session_state.messages:
 # Input form
 with st.form(key="chat_form", clear_on_submit=True):
     user_input = st.text_input("", placeholder="Ask Ody, what the state of your stock is...", label_visibility="collapsed")
-    submitted = st.form_submit_button("Senda")
+    submitted = st.form_submit_button("Send")
 
 if submitted and user_input:
     st.session_state.messages.append(('user', user_input))
