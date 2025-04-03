@@ -9,43 +9,35 @@ def handle_ai_response():
         st.error("❌ AI URL is missing from Streamlit secrets.")
         return
 
-    user_query = st.session_state.messages[-1][1]
+    user_query = next((msg[1] for msg in reversed(st.session_state.messages) if msg[0] == "user"), None)
+    if not user_query:
+        st.warning("⚠️ No user query found.")
+        return
 
     try:
-        # Send query to AI endpoint
         response = requests.post(ai_url, json={
             "query": user_query,
             "session_id": st.session_state.session_id
         })
 
-        # Log response status
-        st.write("🛠️ DEBUG: Response status code:", response.status_code)
-
-        # Check if the request was successful
         if response.ok:
-            st.write("🛠️ DEBUG: Raw response text:", response.text)
-
             try:
                 result = response.json()
                 content = result.get("output", "").replace("\\n", "\n").strip()
 
                 if content:
-                    # Optional: Try to extract and display any JSON card later
                     st.session_state.messages.append(("bot", content))
-                    st.write("✅ DEBUG: Parsed bot response:", content)
                 else:
-                    st.warning("⚠️ ODY responded but didn't send usable content.")
-                    st.session_state.messages.append(("bot", "🤖 ODY didn’t send anything back. Try asking again?"))
+                    st.session_state.messages.append(("bot", "🤖 ODY didn’t send anything back. Try again?"))
 
-            except json.JSONDecodeError as e:
-                st.error("❌ Failed to parse ODY's response as JSON.")
-                st.text(response.text)
+            except json.JSONDecodeError:
+                st.session_state.messages.append(("bot", "❌ Couldn't read ODY's response (invalid JSON)."))
 
         else:
-            # Error from AI server
-            st.error(f"❌ ODY server error: {response.status_code}")
+            # Append error message to chat cleanly
+            st.session_state.messages.append(("bot", "❌ ODY had a problem processing that. Please try again later."))
+            st.error(f"ODY server error: {response.status_code}")
             st.text(response.text)
 
     except Exception as e:
-        # Network/timeout/general failure
-        st.error(f"💥 Exception while contacting ODY: {str(e)}")
+        st.session_state.messages.append(("bot", f"💥 Error talking to ODY: {str(e)}"))
