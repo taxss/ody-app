@@ -95,8 +95,8 @@ for role, msg in st.session_state.messages:
         """, unsafe_allow_html=True)
     elif role == "bot":
         st.markdown(f"""
-            <div class="message-block ody">
-                <span class="label">Ody</span>
+            <div class="message-block odyn">
+                <span class="label">Odyn</span>
                 {msg}
             </div>
         """, unsafe_allow_html=True)
