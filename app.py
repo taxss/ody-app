@@ -25,23 +25,26 @@ if "session_id" not in st.session_state:
 if "is_thinking" not in st.session_state:
     st.session_state.is_thinking = False
 
-# Subscription form
+# 📬 Subscription form (optional webhook)
 with st.expander("📬 Subscribe to Weekly Stock Updates"):
     with st.form("email_form", clear_on_submit=True):
         email = st.text_input("Enter your email")
         subscribed = st.form_submit_button("Subscribe")
         if subscribed and email:
-            try:
-                webhook_url = st.secrets["webhooks"]["subscribe_url"]
-                r = requests.post(webhook_url, json={"email": email})
-                if r.ok:
-                    st.success("You're subscribed! ✅")
-                else:
-                    st.error("Something went wrong. Try again later.")
-            except Exception as e:
-                st.error(f"Failed to reach the subscription server: {str(e)}")
+            subscribe_url = st.secrets.get("subscribe_url")
+            if subscribe_url:
+                try:
+                    r = requests.post(subscribe_url, json={"email": email})
+                    if r.ok:
+                        st.success("You're subscribed! ✅")
+                    else:
+                        st.error("Something went wrong. Try again later.")
+                except Exception as e:
+                    st.error(f"Failed to reach the subscription server: {str(e)}")
+            else:
+                st.warning("Subscription webhook URL not configured yet.")
 
-# Display all chat messages
+# 💬 Display chat messages
 for role, msg in st.session_state.messages:
     if role == "user":
         st.markdown(f"<div style='text-align:right; padding:12px; border-radius:16px; background-color:var(--user-bg); color:var(--text); margin-bottom:10px;'>🧑‍💻 <strong>You:</strong><br>{msg}</div>", unsafe_allow_html=True)
@@ -50,7 +53,7 @@ for role, msg in st.session_state.messages:
     elif role == "card":
         st.markdown(msg, unsafe_allow_html=True)
 
-# Chat input
+# 💬 Chat input
 with st.form("chat_form", clear_on_submit=True):
     user_input = st.text_input("Ask Odyn, what the state of your stock is...", placeholder="e.g. ESG score of Marel", label_visibility="collapsed")
     submitted = st.form_submit_button("Send")
@@ -60,7 +63,7 @@ if submitted and user_input:
     st.session_state.is_thinking = True
     st.rerun()
 
-# AI response trigger
+# 🤖 AI response
 if st.session_state.is_thinking:
     with st.spinner("🤔 ODY is thinking..."):
         try:
@@ -70,6 +73,11 @@ if st.session_state.is_thinking:
         finally:
             st.session_state.is_thinking = False
 
+# ✅ DEBUGGING (safe to remove later)
+if "ai_url" in st.secrets:
+    st.write("✅ DEBUG: Using AI endpoint:", st.secrets["ai_url"])
+else:
+    st.warning("⚠️ AI URL is not set in secrets!")
 
-st.write("DEBUG: Using AI endpoint:", st.secrets["webhooks"]["ai_url"])
-st.write("DEBUG: Last user message:", st.session_state.messages[-1][1])
+if st.session_state.messages:
+    st.write("✅ DEBUG: Last user message:", st.session_state.messages[-1][1])
