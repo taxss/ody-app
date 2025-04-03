@@ -6,46 +6,54 @@ import requests
 
 # Page setup
 st.set_page_config(page_title="ODYN Ai", layout="centered", initial_sidebar_state="collapsed")
+apply_theme()
 
-# Custom styling (Scandinavian minimalism)
+# ✨ Custom CSS for Scandinavian-style minimalism
 st.markdown("""
     <style>
         html, body {
-            background-color: #F9FAFB;
-            color: #111827;
             font-family: 'Helvetica Neue', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
         }
-        .block-container {
-            padding-top: 2rem;
+        h1, h2, h3, h4 {
+            font-weight: 500;
+            margin-bottom: 0.25em;
         }
-        .chat-bubble {
-            padding: 1rem;
+        .message-block {
             border-radius: 12px;
-            margin-bottom: 0.5rem;
-            font-size: 15px;
+            padding: 16px;
+            margin: 10px 0;
             line-height: 1.6;
         }
         .user {
-            background-color: #E5E7EB;
+            background-color: var(--user-bg);
             text-align: right;
         }
         .bot {
-            background-color: #F3F4F6;
+            background-color: var(--bot-bg);
             text-align: left;
         }
-        .chat-wrapper {
-            max-width: 720px;
-            margin: auto;
+        .app-title {
+            text-align: center;
+            padding: 2em 0 0.5em 0;
         }
-        .odyn-header h1 {
-            margin-bottom: 0;
-        }
-        .odyn-header p {
-            color: #6B7280;
-            font-size: 14px;
-            margin-top: 4px;
+        .app-subtitle {
+            text-align: center;
+            color: #888;
+            font-size: 0.95em;
+            margin-bottom: 2em;
         }
     </style>
+""", unsafe_allow_html=True)
+
+# Header
+st.markdown("""
+    <div class="app-title">
+        <img src="https://images.prismic.io/icelandic/dca19f53-0f5e-4a8c-857e-c4a14211aa40_icelandic_corporate_logo_01.png?auto=compress,format" width="280">
+        <h1>ODYN Ai</h1>
+    </div>
+    <div class="app-subtitle">Know what the state of your stock is.</div>
 """, unsafe_allow_html=True)
 
 # Session state init
@@ -56,19 +64,10 @@ if "session_id" not in st.session_state:
 if "is_thinking" not in st.session_state:
     st.session_state.is_thinking = False
 
-# Header
-st.markdown("""
-    <div class="odyn-header" style="text-align: center; padding-bottom: 2rem;">
-        <img src='https://images.prismic.io/icelandic/dca19f53-0f5e-4a8c-857e-c4a14211aa40_icelandic_corporate_logo_01.png?auto=compress,format' width='200'>
-        <h1>ODYN Ai</h1>
-        <p>Know what the state of your stock is</p>
-    </div>
-""", unsafe_allow_html=True)
-
-# 📬 Subscription form
-with st.expander("📬 Subscribe to Weekly Stock Updates"):
+# 📬 Subscription form (still minimal)
+with st.expander("Subscribe to Weekly Stock Updates"):
     with st.form("email_form", clear_on_submit=True):
-        email = st.text_input("Enter your email")
+        email = st.text_input("Enter your email", placeholder="name@example.com")
         subscribed = st.form_submit_button("Subscribe")
         if subscribed and email:
             subscribe_url = st.secrets.get("subscribe_url")
@@ -76,30 +75,26 @@ with st.expander("📬 Subscribe to Weekly Stock Updates"):
                 try:
                     r = requests.post(subscribe_url, json={"email": email})
                     if r.ok:
-                        st.success("You're subscribed! ✅")
+                        st.success("You're subscribed.")
                     else:
                         st.error("Something went wrong. Try again later.")
                 except Exception as e:
-                    st.error(f"Failed to reach the subscription server: {str(e)}")
+                    st.error(f"Subscription error: {str(e)}")
             else:
-                st.warning("No subscription webhook configured.")
+                st.warning("Subscription endpoint not configured.")
 
-# 💬 Display messages
-st.markdown("<div class='chat-wrapper'>", unsafe_allow_html=True)
+# Display chat messages
 for role, msg in st.session_state.messages:
     if role == "user":
-        st.markdown(f"<div class='chat-bubble user'>{msg}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='message-block user'>{msg}</div>", unsafe_allow_html=True)
     elif role == "bot":
-        st.markdown(f"<div class='chat-bubble bot'>🤖 <strong>ODY:</strong><br>{msg}</div>", unsafe_allow_html=True)
-    elif role == "card":
-        st.markdown(msg, unsafe_allow_html=True)
-st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='message-block bot'>{msg}</div>", unsafe_allow_html=True)
 
-# 📝 Input form
+# Input form
 with st.form("chat_form", clear_on_submit=True):
     user_input = st.text_input(
-        "Ask Odyn...",
-        placeholder="e.g. ESG score of Marel or inventory in China",
+        "Ask ODYN something...",
+        placeholder="e.g. ESG score of Marel",
         label_visibility="collapsed"
     )
     submitted = st.form_submit_button("Send")
@@ -109,11 +104,12 @@ if submitted and user_input:
     st.session_state.is_thinking = True
     st.rerun()
 
-# 🤖 ODY replies
+# Trigger bot thinking
 if st.session_state.is_thinking:
-    with st.spinner("ODY is thinking..."):
+    with st.spinner("ODY is analyzing..."):
         try:
             handle_ai_response()
         except Exception as e:
+            st.session_state.messages.append(("bot", f"💥 Error talking to ODY: {str(e)}"))
+        finally:
             st.session_state.is_thinking = False
-            st.error(f"💥 Error talking to ODY: {str(e)}")
