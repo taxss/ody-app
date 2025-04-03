@@ -6,48 +6,78 @@ import requests
 # Page setup
 st.set_page_config(page_title="ODYN Ai", layout="centered", initial_sidebar_state="collapsed")
 
-# 🧼 Clean Icelandic UI styling
 st.markdown("""
     <style>
-        html, body, .main, .block-container {
+        html, body, .stApp {
             background-color: #154069 !important;
+            color: #F4F7FA !important;
         }
-        html, body, div, p, span, input, textarea {
-            font-family: 'Helvetica Neue', sans-serif;
-            color: #F4F7FA;
+
+        .block-container {
+            padding: 2rem 2rem;
+            max-width: 720px;
+            margin: auto;
         }
+
         .app-title {
             text-align: center;
-            padding: 2em 0 0.5em 0;
+            padding: 2.5em 0 0.5em 0;
         }
+
         .app-subtitle {
             text-align: center;
             color: #B0C4D9;
-            font-size: 0.95em;
+            font-size: 1em;
             margin-bottom: 2em;
         }
+
         .message-block {
             border-radius: 12px;
-            padding: 16px;
-            margin: 10px 0;
+            padding: 12px 16px;
+            margin: 12px 0;
             line-height: 1.6;
-            font-size: 15px;
+            font-size: 16px;
         }
+
         .you {
             background-color: #DCE6F2;
             color: #0D1C2E;
             text-align: right;
         }
+
         .ody {
             background-color: #EAF0F8;
             color: #0D1C2E;
             text-align: left;
         }
+
         .label {
-            font-size: 0.85em;
-            font-weight: bold;
-            margin-bottom: 6px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 4px;
             display: block;
+            opacity: 0.6;
+        }
+
+        .stTextInput > div > input {
+            background-color: #FFFFFF !important;
+            color: #111 !important;
+            border-radius: 8px;
+        }
+
+        .stButton button {
+            border-radius: 6px;
+            background-color: #154069;
+            color: white;
+        }
+
+        .stForm {
+            margin-top: 2em;
+        }
+
+        .stExpander {
+            background-color: #1e507c !important;
+            border-radius: 8px;
         }
     </style>
 """, unsafe_allow_html=True)
