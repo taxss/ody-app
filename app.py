@@ -17,7 +17,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Initialize session state
+# Session state init
 if "messages" not in st.session_state:
     st.session_state.messages = []
 if "session_id" not in st.session_state:
@@ -31,17 +31,17 @@ with st.expander("📬 Subscribe to Weekly Stock Updates"):
         email = st.text_input("Enter your email")
         subscribed = st.form_submit_button("Subscribe")
         if subscribed and email:
-            webhook_url = st.secrets["webhooks"]["subscribe_url"]
             try:
+                webhook_url = st.secrets["webhooks"]["subscribe_url"]
                 r = requests.post(webhook_url, json={"email": email})
                 if r.ok:
                     st.success("You're subscribed! ✅")
                 else:
                     st.error("Something went wrong. Try again later.")
-            except:
-                st.error("Failed to reach the subscription server.")
+            except Exception as e:
+                st.error(f"Failed to reach the subscription server: {str(e)}")
 
-# Chat messages
+# Display all chat messages
 for role, msg in st.session_state.messages:
     if role == "user":
         st.markdown(f"<div style='text-align:right; padding:12px; border-radius:16px; background-color:var(--user-bg); color:var(--text); margin-bottom:10px;'>🧑‍💻 <strong>You:</strong><br>{msg}</div>", unsafe_allow_html=True)
@@ -60,6 +60,12 @@ if submitted and user_input:
     st.session_state.is_thinking = True
     st.rerun()
 
+# AI response trigger
 if st.session_state.is_thinking:
-    with st.spinner("ODY is thinking..."):
-        handle_ai_response()
+    with st.spinner("🤔 ODY is thinking..."):
+        try:
+            handle_ai_response()
+        except Exception as e:
+            st.error(f"💥 Something went wrong with ODY: {str(e)}")
+        finally:
+            st.session_state.is_thinking = False
