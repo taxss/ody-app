@@ -123,13 +123,21 @@ for role, msg in st.session_state.messages:
                 {msg}
             </div>
         """, unsafe_allow_html=True)
+
     elif role == "bot":
+        # Wrap ODYN message AND markdown inside styled bubble
         st.markdown(f"""
-            <div class="message-block ody">
-                <span class="label">Ody</span>
-            </div>
+            <div class="message-block odyn">
+                <span class="label">Odyn</span>
+                <div style="margin-top: 8px;">
         """, unsafe_allow_html=True)
-        st.markdown(msg)  # Markdown support!
+
+        # Markdown-render inside the bubble (indented)
+        st.markdown(msg)
+
+        # Close the div
+        st.markdown("</div></div>", unsafe_allow_html=True)
+
 
 # ✏️ Chat input
 with st.form("chat_form", clear_on_submit=True):
