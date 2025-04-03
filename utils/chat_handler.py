@@ -4,9 +4,9 @@ import json
 
 def handle_ai_response():
     ai_url = st.secrets.get("ai_url")
-    
+
     if not ai_url:
-        st.error("❌ AI URL is missing from Streamlit secrets.")
+        st.error("❌ AI URL is missing.")
         return
 
     user_query = next((msg[1] for msg in reversed(st.session_state.messages) if msg[0] == "user"), None)
@@ -26,18 +26,16 @@ def handle_ai_response():
                 content = result.get("output", "").replace("\\n", "\n").strip()
 
                 if content:
-                    st.session_state.messages.append(("bot", content))
+                    st.session_state.messages.append(("bot", content))  # 💬 THIS LINE ADDS THE BOT RESPONSE
                 else:
-                    st.session_state.messages.append(("bot", "🤖 ODY didn’t send anything back. Try again?"))
+                    st.session_state.messages.append(("bot", "🤖 ODY didn’t send anything back."))
 
             except json.JSONDecodeError:
-                st.session_state.messages.append(("bot", "❌ Couldn't read ODY's response (invalid JSON)."))
+                st.session_state.messages.append(("bot", "❌ ODY sent something I couldn’t understand."))
 
         else:
-            # Append error message to chat cleanly
-            st.session_state.messages.append(("bot", "❌ ODY had a problem processing that. Please try again later."))
-            st.error(f"ODY server error: {response.status_code}")
+            st.session_state.messages.append(("bot", f"❌ ODY server error: {response.status_code}"))
             st.text(response.text)
 
     except Exception as e:
-        st.session_state.messages.append(("bot", f"💥 Error talking to ODY: {str(e)}"))
+        st.session_state.messages.append(("bot", f"💥 ODY crashed: {str(e)}"))
