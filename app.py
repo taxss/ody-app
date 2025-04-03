@@ -9,8 +9,12 @@ st.set_page_config(page_title="ODYN Ai", layout="centered", initial_sidebar_stat
 # 🧼 Clean Icelandic UI styling
 st.markdown("""
     <style>
-        body {
-            background-color: #154069;
+        html, body, .main, .block-container {
+            background-color: #154069 !important;
+        }
+        html, body, div, p, span, input, textarea {
+            font-family: 'Helvetica Neue', sans-serif;
+            color: #F4F7FA;
         }
         .app-title {
             text-align: center;
