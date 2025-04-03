@@ -69,3 +69,7 @@ if st.session_state.is_thinking:
             st.error(f"💥 Something went wrong with ODY: {str(e)}")
         finally:
             st.session_state.is_thinking = False
+
+
+st.write("DEBUG: Using AI endpoint:", st.secrets["webhooks"]["ai_url"])
+st.write("DEBUG: Last user message:", st.session_state.messages[-1][1])
