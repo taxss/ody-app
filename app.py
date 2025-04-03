@@ -79,5 +79,10 @@ if "ai_url" in st.secrets:
 else:
     st.warning("⚠️ AI URL is not set in secrets!")
 
-if st.session_state.messages:
-    st.write("✅ DEBUG: Last user message:", st.session_state.messages[-1][1])
+# Find the last user message for debug
+last_user_msg = next((msg for msg in reversed(st.session_state.messages) if msg[0] == "user"), None)
+if last_user_msg:
+    st.write("✅ DEBUG: Last user message:", last_user_msg[1])
+else:
+    st.write("⚠️ DEBUG: No user message found.")
+
