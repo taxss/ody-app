@@ -6,26 +6,30 @@ def handle_ai_response():
     ai_url = st.secrets.get("ai_url")
 
     if not ai_url:
-        st.error("❌ AI URL is missing from Streamlit secrets.")
+        st.error("❌ AI URL is missing.")
         return
 
-    # Safely grab the latest user message
+    # Get last user query
     user_query = next((msg[1] for msg in reversed(st.session_state.messages) if msg[0] == "user"), None)
 
     if not user_query or not user_query.strip():
-        st.warning("⚠️ No user query found to send.")
+        st.warning("⚠️ No user query found.")
         return
 
     try:
-        # 🚀 Send the request to ODY with extended timeout
+        # Send request to AI backend
         response = requests.post(
             ai_url,
             json={
                 "query": user_query,
                 "session_id": st.session_state.session_id
             },
-            timeout=30  # ⏱️ increased timeout from default 10s to 30s
+            timeout=30
         )
+
+        # ✅ Remove "Ody is typing..." placeholder if it's still there
+        if st.session_state.messages and st.session_state.messages[-1][1].startswith("⌛"):
+            st.session_state.messages.pop()
 
         if response.ok:
             try:
@@ -35,19 +39,16 @@ def handle_ai_response():
                 if content:
                     st.session_state.messages.append(("bot", content))
                 else:
-                    st.session_state.messages.append(("bot", "🤖 ODY didn’t send anything back. Try again?"))
-
+                    st.session_state.messages.append(("bot", "🤖 ODY didn’t return any content."))
             except json.JSONDecodeError:
-                st.session_state.messages.append(("bot", "❌ ODY sent something I couldn’t understand."))
+                st.session_state.messages.append(("bot", "❌ ODY returned malformed response."))
         else:
-            # Append readable error message for the user
             st.session_state.messages.append(("bot", f"❌ ODY server error: {response.status_code}"))
             st.text(response.text)
 
     except Exception as e:
-        # Append exception error
-        st.session_state.messages.append(("bot", f"💥 Error contacting ODY: {str(e)}"))
+        st.session_state.messages.append(("bot", f"💥 ODY crashed: {str(e)}"))
 
-    # ✅ Trigger UI refresh so bot message shows up right away
+    # ✅ Reset state + rerun
     st.session_state.is_thinking = False
     st.rerun()
