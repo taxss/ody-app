@@ -18,7 +18,7 @@ st.markdown("""
             background-color: #154069 !important;
             color: #F4F7FA !important;
             font-family: 'Noto Sans', sans-serif !important;
-            font-size: 16px !important;
+            font-size: 15px !important;
         }
 
         .block-container {
@@ -35,7 +35,7 @@ st.markdown("""
         .app-subtitle {
             text-align: center;
             color: #B0C4D9;
-            font-size: 1em;
+            font-size: 0.95em;
             margin-bottom: 2em;
         }
 
@@ -48,7 +48,7 @@ st.markdown("""
             background-color: #DCE6F2;
             color: #0D1C2E;
             border-radius: 12px;
-            padding: 18px 20px;
+            padding: 16px 18px;
             text-align: right;
         }
 
@@ -58,9 +58,9 @@ st.markdown("""
         }
 
         .label {
-            font-size: 0.85rem;
+            font-size: 14px;
             font-weight: 600;
-            opacity: 0.7;
+            opacity: 0.65;
             margin-bottom: 6px;
         }
 
@@ -89,14 +89,14 @@ st.markdown("""
         .message-text,
         .label {
             font-family: 'Noto Sans', sans-serif !important;
-            font-size: 16px !important;
+            font-size: 15px !important;
         }
 
         .chat-form input {
             background-color: #fff !important;
             color: #111 !important;
             border-radius: 6px;
-            padding: 12px 14px;
+            padding: 10px 12px;
             width: 100%;
         }
 
@@ -105,12 +105,13 @@ st.markdown("""
             background-color: #0b2e4d;
             color: white;
             font-weight: 600;
-            padding: 10px 16px;
+            padding: 9px 14px;
             margin-top: 10px;
             width: 100%;
         }
     </style>
 """, unsafe_allow_html=True)
+
 
 
 # Header
