@@ -2,11 +2,12 @@ import streamlit as st
 from utils.chat_handler import handle_ai_response
 import uuid
 import requests
+import time
 
 # Page config
 st.set_page_config(page_title="ODYN Ai", layout="centered", initial_sidebar_state="collapsed")
 
-# Fonts + Styling + Top Nav
+# Fonts + Styling
 st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -16,66 +17,15 @@ st.markdown("""
             font-family: 'Noto Sans', sans-serif !important;
         }
 
-        .top-nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            padding: 0 20px;
-            background-color: #1e507c;
-            color: white;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 9999;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-        }
-
-        .nav-left {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .nav-center {
-            opacity: 0.85;
-            font-style: italic;
-            font-size: 14px;
-        }
-
-        .nav-right form {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .nav-right input {
-            padding: 6px 10px;
-            border-radius: 4px;
-            border: none;
-            font-size: 13px;
-        }
-
-        .nav-right button {
-            background-color: #154069;
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
         .block-container {
-            padding: 100px 2rem 8rem 2rem;
+            padding: 3rem 2rem 8rem 2rem;
             max-width: 720px;
             margin: auto;
         }
 
         .app-title {
             text-align: center;
-            padding: 2em 0 0.5em 0;
+            padding: 2.5em 0 0.5em 0;
         }
 
         .app-subtitle {
@@ -115,6 +65,11 @@ st.markdown("""
             margin-top: 6px;
         }
 
+        .stExpander {
+            background-color: #1e507c !important;
+            border-radius: 8px;
+        }
+
         .chat-input-container {
             position: fixed;
             bottom: 0;
@@ -144,61 +99,64 @@ st.markdown("""
             margin-top: 10px;
             width: 100%;
         }
+
+        .subscribe-banner {
+            position: fixed;
+            bottom: 7rem;
+            left: 0;
+            right: 0;
+            background-color: #1e507c;
+            color: #ffffff;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+        }
+
+        .subscribe-left {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .subscribe-right {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
     </style>
 """, unsafe_allow_html=True)
 
-# Top Nav HTML
+# Header
 st.markdown("""
-    <div class="top-nav">
-        <div class="nav-left">
-            ODYN Ai
-        </div>
-        <div class="nav-center">
-            📬 Get weekly inventory health checks
-        </div>
-        <div class="nav-right">
-            <form action="" method="POST">
-                <input name="sub_email" type="email" placeholder="you@company.com" required>
-                <button type="submit">Subscribe</button>
-            </form>
-        </div>
+    <div class="app-title">
+        <img src="https://images.prismic.io/icelandic/dca19f53-0f5e-4a8c-857e-c4a14211aa40_icelandic_corporate_logo_01.png?auto=compress,format" width="280">
+        <h1 style="color:white;">ODYN Ai</h1>
     </div>
+    <div class="app-subtitle">Know what the state of your stock is.</div>
 """, unsafe_allow_html=True)
 
-# Session state init
+# Session state
 if "messages" not in st.session_state:
     st.session_state.messages = []
 if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 if "is_thinking" not in st.session_state:
     st.session_state.is_thinking = False
+if "show_subscribe" not in st.session_state:
+    st.session_state.show_subscribe = False
+if "subscribe_shown_once" not in st.session_state:
+    st.session_state.subscribe_shown_once = False
+if "subscribe_timer" not in st.session_state:
+    st.session_state.subscribe_timer = time.time()
 
-# ✅ Handle subscription POST from nav form
-query_params = st.query_params
-if "sub_email" in query_params:
-    email = query_params["sub_email"][0]
-    subscribe_url = st.secrets.get("subscribe_url")
-    if subscribe_url:
-        try:
-            r = requests.post(subscribe_url, json={"email": email})
-            if r.ok:
-                st.success("You're subscribed ✅")
-            else:
-                st.error("Something went wrong. Try again later.")
-        except Exception as e:
-            st.error(f"Subscription error: {str(e)}")
-    else:
-        st.warning("Subscription webhook not configured.")
-
-
-
-# Header
-st.markdown("""
-    <div class="app-title">
-        <h1 style="color:white;">ODYN Ai</h1>
-    </div>
-    <div class="app-subtitle">Know what the state of your stock is.</div>
-""", unsafe_allow_html=True)
+# ⏱ Show banner after 15 seconds
+if not st.session_state.show_subscribe and not st.session_state.subscribe_shown_once:
+    if time.time() - st.session_state.subscribe_timer > 15:
+        st.session_state.show_subscribe = True
+        st.session_state.subscribe_shown_once = True
 
 # 💬 Chat rendering
 for role, msg in st.session_state.messages:
@@ -209,7 +167,6 @@ for role, msg in st.session_state.messages:
                 <div class="message-text">{msg}</div>
             </div>
         """, unsafe_allow_html=True)
-
     elif role == "bot":
         st.markdown(f"""
             <div class="message-block odyn">
@@ -218,7 +175,45 @@ for role, msg in st.session_state.messages:
         st.markdown(msg)
         st.markdown("</div>", unsafe_allow_html=True)
 
-# ✏️ Chat input form
+# 📬 Floating subscribe banner
+if st.session_state.show_subscribe:
+    with st.container():
+        st.markdown("""
+            <div class="subscribe-banner">
+                <div class="subscribe-left">
+                    📬 Get weekly inventory health checks in your inbox.
+                </div>
+                <div class="subscribe-right">
+        """, unsafe_allow_html=True)
+
+        with st.form("email_inline", clear_on_submit=True):
+            cols = st.columns([3, 1, 0.5])
+            with cols[0]:
+                email = st.text_input("Email", placeholder="you@company.com", label_visibility="collapsed")
+            with cols[1]:
+                submitted = st.form_submit_button("Subscribe")
+            with cols[2]:
+                if st.button("❌", key="dismiss_subscribe", help="Close"):
+                    st.session_state.show_subscribe = False
+
+        st.markdown("</div></div>", unsafe_allow_html=True)
+
+        if submitted and email:
+            subscribe_url = st.secrets.get("subscribe_url")
+            if subscribe_url:
+                try:
+                    r = requests.post(subscribe_url, json={"email": email})
+                    if r.ok:
+                        st.success("You're subscribed ✅")
+                        st.session_state.show_subscribe = False
+                    else:
+                        st.error("Something went wrong. Try again later.")
+                except Exception as e:
+                    st.error(f"Subscription error: {str(e)}")
+            else:
+                st.warning("Subscription webhook not configured.")
+
+# ✏️ Floating Input Form
 with st.container():
     st.markdown('<div class="chat-input-container">', unsafe_allow_html=True)
     with st.form("chat_form", clear_on_submit=True):
