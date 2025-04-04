@@ -14,207 +14,126 @@ if "session_id" not in st.session_state:
 if "is_thinking" not in st.session_state:
     st.session_state.is_thinking = False
 
-# Styles & Fonts
+# Styles + Fonts
 st.markdown("""
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        html, body, .stApp {
-            background-color: #154069 !important;
-            color: #F4F7FA !important;
-            font-family: 'Noto Sans', sans-serif !important;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+    html, body, .stApp {
+        background-color: #154069 !important;
+        color: #F4F7FA !important;
+        font-family: 'Noto Sans', sans-serif !important;
+    }
 
-        .top-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 72px;
-            padding: 14px 24px;
-            background-color: #1e507c;
-            color: white;
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 10000;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
-        }
+    .top-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 60px;
+        background-color: #1e507c;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 24px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        z-index: 10000;
+    }
 
-        .top-left {
-            font-size: 18px;
-            font-weight: bold;
-        }
+    .top-bar .left {
+        font-weight: bold;
+    }
 
-        .top-center {
-            font-style: italic;
-            opacity: 0.8;
-        }
+    .top-bar .right {
+        font-size: 14px;
+        opacity: 0.8;
+    }
 
-        .top-right input[type="email"] {
-            padding: 6px 10px;
-            border-radius: 4px;
-            border: none;
-            font-size: 13px;
-            margin-right: 8px;
-        }
+    .block-container {
+        padding-top: 100px !important;
+        padding-bottom: 100px;
+        max-width: 720px;
+        margin: auto;
+    }
 
-        .top-right button {
-            background-color: #154069;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-weight: 500;
-            cursor: pointer;
-        }
+    .hero {
+        text-align: center;
+        margin-top: 40px;
+        margin-bottom: 30px;
+    }
 
-        .block-container {
-            padding-top: 100px !important;
-            padding-bottom: 100px;
-            max-width: 720px;
-            margin: auto;
-        }
+    .hero h1 {
+        margin: 0;
+        color: white;
+    }
 
-        .message-block {
-            margin: 20px 0;
-            line-height: 1.65;
-            font-size: 16px;
-        }
+    .hero p {
+        color: #B0C4D9;
+    }
 
-        .you {
-            background-color: #DCE6F2;
-            color: #0D1C2E;
-            border-radius: 12px;
-            padding: 18px 20px;
-            text-align: right;
-        }
+    .message-block {
+        margin: 20px 0;
+        line-height: 1.65;
+        font-size: 16px;
+    }
 
-        .odyn {
-            color: #F4F7FA;
-            text-align: left;
-        }
+    .you {
+        background-color: #DCE6F2;
+        color: #0D1C2E;
+        border-radius: 12px;
+        padding: 18px 20px;
+        text-align: right;
+    }
 
-        .label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            opacity: 0.7;
-            margin-bottom: 6px;
-        }
+    .odyn {
+        color: #F4F7FA;
+        text-align: left;
+    }
 
-        .chat-input-container {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: #154069;
-            padding: 1rem 2rem;
-            box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
-            z-index: 999;
-        }
+    .label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        opacity: 0.7;
+        margin-bottom: 6px;
+    }
 
-        .chat-form input {
-            background-color: #fff !important;
-            color: #111 !important;
-            border-radius: 6px;
-            padding: 12px 14px;
-            font-size: 15px;
-            width: 100%;
-        }
+    .chat-input-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #154069;
+        padding: 1rem 2rem;
+        box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
+        z-index: 999;
+    }
 
-        .chat-form button {
-            border-radius: 6px;
-            background-color: #0b2e4d;
-            color: white;
-            font-weight: 600;
-            padding: 10px 16px;
-            margin-top: 10px;
-            width: 100%;
-        }
-    </style>
+    .chat-form input {
+        background-color: #fff !important;
+        color: #111 !important;
+        border-radius: 6px;
+        padding: 12px 14px;
+        font-size: 15px;
+        width: 100%;
+    }
+
+    .chat-form button {
+        border-radius: 6px;
+        background-color: #0b2e4d;
+        color: white;
+        font-weight: 600;
+        padding: 10px 16px;
+        margin-top: 10px;
+        width: 100%;
+    }
+</style>
 """, unsafe_allow_html=True)
 
-# ✅ Nav bar (real HTML container)
+# ✅ Top Nav Bar
 st.markdown("""
 <div class="top-bar">
-    <div class="top-left">ODYN Ai</div>
-    <div class="top-center">📬 Weekly inventory health checks</div>
-    <div class="top-right">
-        <form action="" method="GET">
-            <input type="email" name="sub_email" placeholder="you@company.com" required>
-            <button type="submit">Subscribe</button>
-        </form>
-    </div>
+    <div class="left">Menu Placeholder</div>
+    <div class="right">🧠 Inventory Intelligence</div>
 </div>
 """, unsafe_allow_html=True)
 
-# ✅ Handle query param email submission
-query_params = st.query_params
-if "sub_email" in query_params:
-    email = query_params["sub_email"][0]
-    subscribe_url = st.secrets.get("subscribe_url")
-    if subscribe_url:
-        try:
-            r = requests.post(subscribe_url, json={"email": email})
-            if r.ok:
-                st.success("You're subscribed ✅")
-            else:
-                st.error("Something went wrong. Try again later.")
-        except Exception as e:
-            st.error(f"Subscription error: {str(e)}")
-    else:
-        st.warning("Subscription webhook not configured.")
-
-# 💬 Chat rendering
-for role, msg in st.session_state.messages:
-    if role == "user":
-        st.markdown(f"""
-            <div class="message-block you">
-                <div class="label">You</div>
-                <div class="message-text">{msg}</div>
-            </div>
-        """, unsafe_allow_html=True)
-    elif role == "bot":
-        st.markdown(f"""
-            <div class="message-block odyn">
-                <div class="label">Odyn</div>
-        """, unsafe_allow_html=True)
-        st.markdown(msg)
-        st.markdown("</div>", unsafe_allow_html=True)
-
-# ✏️ Chat input form
-with st.container():
-    st.markdown('<div class="chat-input-container">', unsafe_allow_html=True)
-    with st.form("chat_form", clear_on_submit=True):
-        user_input = st.text_input(
-            "", placeholder="Let me help you find the right information...",
-            label_visibility="collapsed"
-        )
-        submitted = st.form_submit_button("Send")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-# ⏎ Handle submission
-if submitted and user_input:
-    st.session_state.messages.append(("user", user_input))
-    st.session_state.is_thinking = True
-    st.rerun()
-
-# 🤖 Trigger ODYN reply
-if st.session_state.is_thinking:
-    with st.spinner("Odyn is thinking..."):
-        try:
-            handle_ai_response()
-        except Exception as e:
-            st.session_state.messages.append(("bot", f"💥 Error talking to Odyn: {str(e)}"))
-        finally:
-            st.session_state.is_thinking = False
-
-# ⬇️ Auto scroll
-st.markdown("""
-<script>
-    const container = window.parent.document.querySelector('.block-container');
-    if (container) {
-        container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-    }
-</script>
-""", unsafe_allow_html=True)
+# ✅ SVG LOGO + TITLE CENTER
