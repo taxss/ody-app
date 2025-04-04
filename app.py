@@ -2,7 +2,6 @@ import streamlit as st
 from utils.chat_handler import handle_ai_response
 import uuid
 import requests
-import time
 
 # Page config
 st.set_page_config(page_title="ODYN Ai", layout="centered", initial_sidebar_state="collapsed")
@@ -78,7 +77,6 @@ st.markdown("""
             background-color: #154069;
             padding: 1rem 2rem;
             box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
-            z-index: 999;
         }
 
         .chat-form input {
@@ -99,33 +97,6 @@ st.markdown("""
             margin-top: 10px;
             width: 100%;
         }
-
-        .subscribe-banner {
-            position: fixed;
-            bottom: 7rem;
-            left: 0;
-            right: 0;
-            background-color: #1e507c;
-            color: #ffffff;
-            padding: 14px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            z-index: 1000;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
-        }
-
-        .subscribe-left {
-            flex: 1;
-            font-weight: 500;
-        }
-
-        .subscribe-right {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -145,18 +116,25 @@ if "session_id" not in st.session_state:
     st.session_state.session_id = str(uuid.uuid4())
 if "is_thinking" not in st.session_state:
     st.session_state.is_thinking = False
-if "show_subscribe" not in st.session_state:
-    st.session_state.show_subscribe = False
-if "subscribe_shown_once" not in st.session_state:
-    st.session_state.subscribe_shown_once = False
-if "subscribe_timer" not in st.session_state:
-    st.session_state.subscribe_timer = time.time()
 
-# ⏱ Show banner after 15 seconds
-if not st.session_state.show_subscribe and not st.session_state.subscribe_shown_once:
-    if time.time() - st.session_state.subscribe_timer > 15:
-        st.session_state.show_subscribe = True
-        st.session_state.subscribe_shown_once = True
+# 📬 Subscribe form
+with st.expander("Subscribe to Weekly Stock Updates"):
+    with st.form("email_form", clear_on_submit=True):
+        email = st.text_input("Enter your email", placeholder="name@example.com")
+        subscribed = st.form_submit_button("Subscribe")
+        if subscribed and email:
+            subscribe_url = st.secrets.get("subscribe_url")
+            if subscribe_url:
+                try:
+                    r = requests.post(subscribe_url, json={"email": email})
+                    if r.ok:
+                        st.success("You're subscribed.")
+                    else:
+                        st.error("Something went wrong. Try again later.")
+                except Exception as e:
+                    st.error(f"Subscription error: {str(e)}")
+            else:
+                st.warning("Subscription webhook not configured.")
 
 # 💬 Chat rendering
 for role, msg in st.session_state.messages:
@@ -167,6 +145,7 @@ for role, msg in st.session_state.messages:
                 <div class="message-text">{msg}</div>
             </div>
         """, unsafe_allow_html=True)
+
     elif role == "bot":
         st.markdown(f"""
             <div class="message-block odyn">
@@ -175,49 +154,11 @@ for role, msg in st.session_state.messages:
         st.markdown(msg)
         st.markdown("</div>", unsafe_allow_html=True)
 
-# 📬 Floating subscribe banner
-if st.session_state.show_subscribe:
-    with st.container():
-        st.markdown("""
-            <div class="subscribe-banner">
-                <div class="subscribe-left">
-                    📬 Get weekly inventory health checks in your inbox.
-                </div>
-                <div class="subscribe-right">
-        """, unsafe_allow_html=True)
-
-        with st.form("email_inline", clear_on_submit=True):
-            cols = st.columns([3, 1, 0.5])
-            with cols[0]:
-                email = st.text_input("Email", placeholder="you@company.com", label_visibility="collapsed")
-            with cols[1]:
-                submitted = st.form_submit_button("Subscribe")
-            with cols[2]:
-                if st.button("❌", key="dismiss_subscribe", help="Close"):
-                    st.session_state.show_subscribe = False
-
-        st.markdown("</div></div>", unsafe_allow_html=True)
-
-        if submitted and email:
-            subscribe_url = st.secrets.get("subscribe_url")
-            if subscribe_url:
-                try:
-                    r = requests.post(subscribe_url, json={"email": email})
-                    if r.ok:
-                        st.success("You're subscribed ✅")
-                        st.session_state.show_subscribe = False
-                    else:
-                        st.error("Something went wrong. Try again later.")
-                except Exception as e:
-                    st.error(f"Subscription error: {str(e)}")
-            else:
-                st.warning("Subscription webhook not configured.")
-
 # ✏️ Floating Input Form
 with st.container():
     st.markdown('<div class="chat-input-container">', unsafe_allow_html=True)
     with st.form("chat_form", clear_on_submit=True):
-        user_input = st.text_input("", placeholder="Let me help you find the right information....", label_visibility="collapsed")
+        user_input = st.text_input("", placeholder="The best decisions start with the right data. Let me find it for you", label_visibility="collapsed")
         submitted = st.form_submit_button("Send")
     st.markdown("</div>", unsafe_allow_html=True)
 
