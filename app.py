@@ -1,16 +1,16 @@
 import streamlit as st
 from utils.chat_handler import handle_ai_response
+from utils.theme import apply_theme  # Optional: enable if using theme switcher
 import uuid
 import requests
-
-from utils.theme import apply_theme
-apply_theme()
-
 
 # Page config
 st.set_page_config(page_title="ODYN Ai", layout="centered", initial_sidebar_state="collapsed")
 
-# Fonts + Styling
+# Apply optional theme switch
+# apply_theme()  # Uncomment if you want the light/dark mode switch
+
+# Custom Styling
 st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -113,7 +113,7 @@ st.markdown("""
     <div class="app-subtitle">Know what the state of your stock is.</div>
 """, unsafe_allow_html=True)
 
-# Session state
+# Init session state
 if "messages" not in st.session_state:
     st.session_state.messages = []
 if "session_id" not in st.session_state:
@@ -121,7 +121,7 @@ if "session_id" not in st.session_state:
 if "is_thinking" not in st.session_state:
     st.session_state.is_thinking = False
 
-# 📬 Subscribe form
+# 📬 Email Subscribe
 with st.expander("Subscribe to Weekly Stock Updates"):
     with st.form("email_form", clear_on_submit=True):
         email = st.text_input("Enter your email", placeholder="name@example.com")
@@ -140,7 +140,7 @@ with st.expander("Subscribe to Weekly Stock Updates"):
             else:
                 st.warning("Subscription webhook not configured.")
 
-# 💬 Chat rendering
+# 💬 Chat messages
 for role, msg in st.session_state.messages:
     if role == "user":
         st.markdown(f"""
@@ -149,16 +149,15 @@ for role, msg in st.session_state.messages:
                 <div class="message-text">{msg}</div>
             </div>
         """, unsafe_allow_html=True)
-
     elif role == "bot":
         st.markdown(f"""
             <div class="message-block odyn">
                 <div class="label">Odyn</div>
         """, unsafe_allow_html=True)
-        st.markdown(msg)
+        st.markdown(msg, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-# ✏️ Floating Input Form
+# ✏️ Chat Input
 with st.container():
     st.markdown('<div class="chat-input-container">', unsafe_allow_html=True)
     with st.form("chat_form", clear_on_submit=True):
@@ -166,23 +165,18 @@ with st.container():
         submitted = st.form_submit_button("Send")
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ⏎ Handle submission
-if submitted and user_input:
-    st.session_state.messages.append(("user", user_input))
+# ⏎ On Submit
+if submitted and user_input.strip():
+    st.session_state.messages.append(("user", user_input.strip()))
     st.session_state.is_thinking = True
     st.rerun()
 
-# 🤖 Trigger ODYN reply
+# 🤖 Trigger AI
 if st.session_state.is_thinking:
     with st.spinner("Odyn is thinking..."):
-        try:
-            handle_ai_response()
-        except Exception as e:
-            st.session_state.messages.append(("bot", f"💥 Error talking to Odyn: {str(e)}"))
-        finally:
-            st.session_state.is_thinking = False
+        handle_ai_response()
 
-# ⬇️ Auto scroll
+# ⬇️ Auto Scroll
 st.markdown("""
     <script>
         const container = window.parent.document.querySelector('.block-container');
