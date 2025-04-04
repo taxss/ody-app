@@ -18,6 +18,7 @@ st.markdown("""
             background-color: #154069 !important;
             color: #F4F7FA !important;
             font-family: 'Noto Sans', sans-serif !important;
+            font-size: 16px !important;
         }
 
         .block-container {
@@ -41,7 +42,6 @@ st.markdown("""
         .message-block {
             margin: 20px 0;
             line-height: 1.65;
-            font-size: 16px;
         }
 
         .you {
@@ -83,12 +83,20 @@ st.markdown("""
             box-shadow: 0 -2px 8px rgba(0,0,0,0.2);
         }
 
+        .chat-form input,
+        .chat-form button,
+        .message-block,
+        .message-text,
+        .label {
+            font-family: 'Noto Sans', sans-serif !important;
+            font-size: 16px !important;
+        }
+
         .chat-form input {
             background-color: #fff !important;
             color: #111 !important;
             border-radius: 6px;
             padding: 12px 14px;
-            font-size: 15px;
             width: 100%;
         }
 
@@ -103,6 +111,7 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+
 
 # Header
 st.markdown("""
