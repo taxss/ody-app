@@ -6,7 +6,7 @@ import requests
 # Page config
 st.set_page_config(page_title="ODYN Ai", layout="centered", initial_sidebar_state="collapsed")
 
-# Session state init
+# Init session state
 if "messages" not in st.session_state:
     st.session_state.messages = []
 if "session_id" not in st.session_state:
@@ -14,7 +14,7 @@ if "session_id" not in st.session_state:
 if "is_thinking" not in st.session_state:
     st.session_state.is_thinking = False
 
-# Fonts + Styling + Top Nav
+# Styles & Fonts
 st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
     <style>
@@ -24,51 +24,56 @@ st.markdown("""
             font-family: 'Noto Sans', sans-serif !important;
         }
 
-        .top-nav {
+        .top-bar {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            height: 80px;
-            padding: 12px 24px;
+            height: 72px;
+            padding: 14px 24px;
             background-color: #1e507c;
             color: white;
-            font-size: 14px;
+            font-size: 15px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            z-index: 9999;
+            z-index: 10000;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
         }
 
-        .nav-left {
+        .top-left {
             font-size: 18px;
-            font-weight: 700;
+            font-weight: bold;
         }
 
-        .nav-center {
-            opacity: 0.85;
+        .top-center {
             font-style: italic;
-            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .top-right input[type="email"] {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: none;
+            font-size: 13px;
+            margin-right: 8px;
+        }
+
+        .top-right button {
+            background-color: #154069;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
         }
 
         .block-container {
             padding-top: 100px !important;
-            padding-bottom: 8rem;
+            padding-bottom: 100px;
             max-width: 720px;
             margin: auto;
-        }
-
-        .app-title {
-            text-align: center;
-            padding: 2em 0 0.5em 0;
-        }
-
-        .app-subtitle {
-            text-align: center;
-            color: #B0C4D9;
-            font-size: 1em;
-            margin-bottom: 2em;
         }
 
         .message-block {
@@ -129,31 +134,36 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ✅ Top Nav Bar as 3 columns (Streamlit layout!)
-with st.container():
-    nav_col1, nav_col2, nav_col3 = st.columns([1, 2, 2])
-    with nav_col1:
-        st.markdown("### ODYN Ai")
-    with nav_col2:
-        st.markdown("📬 *Get weekly inventory health checks*")
-    with nav_col3:
-        with st.form("navbar_form", clear_on_submit=True):
-            email = st.text_input("",
-                placeholder="you@company.com",
-                label_visibility="collapsed"
-            )
-            submitted = st.form_submit_button("Subscribe")
-        if submitted and email:
-            subscribe_url = st.secrets.get("subscribe_url")
-            if subscribe_url:
-                try:
-                    r = requests.post(subscribe_url, json={"email": email})
-                    if r.ok:
-                        st.success("You're subscribed ✅")
-                    else:
-                        st.error("Subscription failed.")
-                except Exception as e:
-                    st.error(f"Error: {str(e)}")
+# ✅ Nav bar (real HTML container)
+st.markdown("""
+<div class="top-bar">
+    <div class="top-left">ODYN Ai</div>
+    <div class="top-center">📬 Weekly inventory health checks</div>
+    <div class="top-right">
+        <form action="" method="GET">
+            <input type="email" name="sub_email" placeholder="you@company.com" required>
+            <button type="submit">Subscribe</button>
+        </form>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# ✅ Handle query param email submission
+query_params = st.query_params
+if "sub_email" in query_params:
+    email = query_params["sub_email"][0]
+    subscribe_url = st.secrets.get("subscribe_url")
+    if subscribe_url:
+        try:
+            r = requests.post(subscribe_url, json={"email": email})
+            if r.ok:
+                st.success("You're subscribed ✅")
+            else:
+                st.error("Something went wrong. Try again later.")
+        except Exception as e:
+            st.error(f"Subscription error: {str(e)}")
+    else:
+        st.warning("Subscription webhook not configured.")
 
 # 💬 Chat rendering
 for role, msg in st.session_state.messages:
@@ -177,8 +187,7 @@ with st.container():
     st.markdown('<div class="chat-input-container">', unsafe_allow_html=True)
     with st.form("chat_form", clear_on_submit=True):
         user_input = st.text_input(
-            "",
-            placeholder="Let me help you find the right information...",
+            "", placeholder="Let me help you find the right information...",
             label_visibility="collapsed"
         )
         submitted = st.form_submit_button("Send")
@@ -202,10 +211,10 @@ if st.session_state.is_thinking:
 
 # ⬇️ Auto scroll
 st.markdown("""
-    <script>
-        const container = window.parent.document.querySelector('.block-container');
-        if (container) {
-            container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-        }
-    </script>
+<script>
+    const container = window.parent.document.querySelector('.block-container');
+    if (container) {
+        container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+    }
+</script>
 """, unsafe_allow_html=True)
