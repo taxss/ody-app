@@ -35,23 +35,21 @@ st.markdown("""
         }
 
         .message-block {
-            border-radius: 12px;
-            padding: 18px 20px;
             margin: 20px 0;
             line-height: 1.65;
             font-size: 16px;
-            background-color: transparent;
         }
 
         .you {
             background-color: #DCE6F2;
             color: #0D1C2E;
+            border-radius: 12px;
+            padding: 18px 20px;
             text-align: right;
         }
 
         .odyn {
-            background-color: #EAF0F8;
-            color: #0D1C2E;
+            color: #F4F7FA;
             text-align: left;
         }
 
@@ -152,10 +150,9 @@ for role, msg in st.session_state.messages:
         st.markdown(f"""
             <div class="message-block odyn">
                 <div class="label">Odyn</div>
-                <div class="message-text">
         """, unsafe_allow_html=True)
-        st.markdown(msg)  # Markdown support!
-        st.markdown("</div></div>", unsafe_allow_html=True)
+        st.markdown(msg)
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # ✏️ Floating Input Form
 with st.container():
@@ -163,13 +160,11 @@ with st.container():
     with st.form("chat_form", clear_on_submit=True):
         user_input = st.text_input("", placeholder="e.g. ESG score of Marel", label_visibility="collapsed")
         submitted = st.form_submit_button("Send")
-
     st.markdown("</div>", unsafe_allow_html=True)
 
 # ⏎ Handle submission
 if submitted and user_input:
     st.session_state.messages.append(("user", user_input))
-    st.session_state.messages.append(("bot", "⌛ Odyn is typing..."))
     st.session_state.is_thinking = True
     st.rerun()
 
