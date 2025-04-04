@@ -140,23 +140,6 @@ with st.expander("Subscribe to Weekly Stock Updates"):
             else:
                 st.warning("Subscription webhook not configured.")
 
-# 💬 Chat messages
-for role, msg in st.session_state.messages:
-    if role == "user":
-        st.markdown(f"""
-            <div class="message-block you">
-                <div class="label">You</div>
-                <div class="message-text">{msg}</div>
-            </div>
-        """, unsafe_allow_html=True)
-    elif role == "bot":
-        st.markdown(f"""
-            <div class="message-block odyn">
-                <div class="label">Odyn</div>
-        """, unsafe_allow_html=True)
-        st.markdown(msg, unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-
 # 💬 Chat rendering
 for role, msg in st.session_state.messages:
     if role == "user":
