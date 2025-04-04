@@ -174,7 +174,7 @@ if "is_thinking" not in st.session_state:
     st.session_state.is_thinking = False
 
 # ✅ Handle subscription POST from nav form
-query_params = st.experimental_get_query_params()
+query_params = st.query_params
 if "sub_email" in query_params:
     email = query_params["sub_email"][0]
     subscribe_url = st.secrets.get("subscribe_url")
@@ -189,6 +189,7 @@ if "sub_email" in query_params:
             st.error(f"Subscription error: {str(e)}")
     else:
         st.warning("Subscription webhook not configured.")
+
 
 
 # Header
