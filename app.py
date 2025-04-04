@@ -171,7 +171,7 @@ for role, msg in st.session_state.messages:
 with st.container():
     st.markdown('<div class="chat-input-container">', unsafe_allow_html=True)
     with st.form("chat_form", clear_on_submit=True):
-        user_input = st.text_input("", placeholder="e.g how much redfish over 180 days old....", label_visibility="collapsed")
+        user_input = st.text_input("", placeholder="e.g stock of salmon over 180 days old....", label_visibility="collapsed")
         submitted = st.form_submit_button("Send")
     st.markdown("</div>", unsafe_allow_html=True)
 
