@@ -173,20 +173,23 @@ if "session_id" not in st.session_state:
 if "is_thinking" not in st.session_state:
     st.session_state.is_thinking = False
 
-# Handle subscription POST
-if st.query_params := st.experimental_get_query_params():
-    if "sub_email" in st.query_params:
-        email = st.query_params["sub_email"][0]
-        subscribe_url = st.secrets.get("subscribe_url")
-        if subscribe_url:
-            try:
-                r = requests.post(subscribe_url, json={"email": email})
-                if r.ok:
-                    st.success("You're subscribed ✅")
-                else:
-                    st.error("Something went wrong. Try again later.")
-            except Exception as e:
-                st.error(f"Subscription error: {str(e)}")
+# ✅ Handle subscription POST from nav form
+query_params = st.experimental_get_query_params()
+if "sub_email" in query_params:
+    email = query_params["sub_email"][0]
+    subscribe_url = st.secrets.get("subscribe_url")
+    if subscribe_url:
+        try:
+            r = requests.post(subscribe_url, json={"email": email})
+            if r.ok:
+                st.success("You're subscribed ✅")
+            else:
+                st.error("Something went wrong. Try again later.")
+        except Exception as e:
+            st.error(f"Subscription error: {str(e)}")
+    else:
+        st.warning("Subscription webhook not configured.")
+
 
 # Header
 st.markdown("""
