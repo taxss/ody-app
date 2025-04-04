@@ -6,6 +6,14 @@ import requests
 # Page config
 st.set_page_config(page_title="ODYN Ai", layout="centered", initial_sidebar_state="collapsed")
 
+# Session state init
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+if "session_id" not in st.session_state:
+    st.session_state.session_id = str(uuid.uuid4())
+if "is_thinking" not in st.session_state:
+    st.session_state.is_thinking = False
+
 # Fonts + Styling + Top Nav
 st.markdown("""
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
@@ -21,8 +29,8 @@ st.markdown("""
             top: 0;
             left: 0;
             right: 0;
-            height: 60px;
-            padding: 0 20px;
+            height: 80px;
+            padding: 12px 24px;
             background-color: #1e507c;
             color: white;
             font-size: 14px;
@@ -34,8 +42,8 @@ st.markdown("""
         }
 
         .nav-left {
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 18px;
+            font-weight: 700;
         }
 
         .nav-center {
@@ -44,31 +52,9 @@ st.markdown("""
             font-size: 14px;
         }
 
-        .nav-right form {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .nav-right input {
-            padding: 6px 10px;
-            border-radius: 4px;
-            border: none;
-            font-size: 13px;
-        }
-
-        .nav-right button {
-            background-color: #154069;
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-weight: 500;
-            cursor: pointer;
-        }
-
         .block-container {
-            padding: 100px 2rem 8rem 2rem;
+            padding-top: 100px !important;
+            padding-bottom: 8rem;
             max-width: 720px;
             margin: auto;
         }
@@ -111,10 +97,6 @@ st.markdown("""
             margin-bottom: 6px;
         }
 
-        .message-text {
-            margin-top: 6px;
-        }
-
         .chat-input-container {
             position: fixed;
             bottom: 0;
@@ -147,58 +129,31 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Top Nav HTML
-st.markdown("""
-    <div class="top-nav">
-        <div class="nav-left">
-            ODYN Ai
-        </div>
-        <div class="nav-center">
-            📬 Get weekly inventory health checks
-        </div>
-        <div class="nav-right">
-            <form action="" method="POST">
-                <input name="sub_email" type="email" placeholder="you@company.com" required>
-                <button type="submit">Subscribe</button>
-            </form>
-        </div>
-    </div>
-""", unsafe_allow_html=True)
-
-# Session state init
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-if "session_id" not in st.session_state:
-    st.session_state.session_id = str(uuid.uuid4())
-if "is_thinking" not in st.session_state:
-    st.session_state.is_thinking = False
-
-# ✅ Handle subscription POST from nav form
-query_params = st.query_params
-if "sub_email" in query_params:
-    email = query_params["sub_email"][0]
-    subscribe_url = st.secrets.get("subscribe_url")
-    if subscribe_url:
-        try:
-            r = requests.post(subscribe_url, json={"email": email})
-            if r.ok:
-                st.success("You're subscribed ✅")
-            else:
-                st.error("Something went wrong. Try again later.")
-        except Exception as e:
-            st.error(f"Subscription error: {str(e)}")
-    else:
-        st.warning("Subscription webhook not configured.")
-
-
-
-# Header
-st.markdown("""
-    <div class="app-title">
-        <h1 style="color:white;">ODYN Ai</h1>
-    </div>
-    <div class="app-subtitle">Know what the state of your stock is.</div>
-""", unsafe_allow_html=True)
+# ✅ Top Nav Bar as 3 columns (Streamlit layout!)
+with st.container():
+    nav_col1, nav_col2, nav_col3 = st.columns([1, 2, 2])
+    with nav_col1:
+        st.markdown("### ODYN Ai")
+    with nav_col2:
+        st.markdown("📬 *Get weekly inventory health checks*")
+    with nav_col3:
+        with st.form("navbar_form", clear_on_submit=True):
+            email = st.text_input("",
+                placeholder="you@company.com",
+                label_visibility="collapsed"
+            )
+            submitted = st.form_submit_button("Subscribe")
+        if submitted and email:
+            subscribe_url = st.secrets.get("subscribe_url")
+            if subscribe_url:
+                try:
+                    r = requests.post(subscribe_url, json={"email": email})
+                    if r.ok:
+                        st.success("You're subscribed ✅")
+                    else:
+                        st.error("Subscription failed.")
+                except Exception as e:
+                    st.error(f"Error: {str(e)}")
 
 # 💬 Chat rendering
 for role, msg in st.session_state.messages:
@@ -209,7 +164,6 @@ for role, msg in st.session_state.messages:
                 <div class="message-text">{msg}</div>
             </div>
         """, unsafe_allow_html=True)
-
     elif role == "bot":
         st.markdown(f"""
             <div class="message-block odyn">
@@ -222,7 +176,11 @@ for role, msg in st.session_state.messages:
 with st.container():
     st.markdown('<div class="chat-input-container">', unsafe_allow_html=True)
     with st.form("chat_form", clear_on_submit=True):
-        user_input = st.text_input("", placeholder="Let me help you find the right information....", label_visibility="collapsed")
+        user_input = st.text_input(
+            "",
+            placeholder="Let me help you find the right information...",
+            label_visibility="collapsed"
+        )
         submitted = st.form_submit_button("Send")
     st.markdown("</div>", unsafe_allow_html=True)
 
