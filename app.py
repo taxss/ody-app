@@ -140,7 +140,7 @@ with st.expander("Subscribe to Weekly Stock Updates"):
             else:
                 st.warning("Subscription webhook not configured.")
 
-# 💬 Chat rendering
+# 💬 Chat messages
 for role, msg in st.session_state.messages:
     if role == "user":
         st.markdown(f"""
@@ -149,21 +149,13 @@ for role, msg in st.session_state.messages:
                 <div class="message-text">{msg}</div>
             </div>
         """, unsafe_allow_html=True)
-
     elif role == "bot":
         st.markdown(f"""
             <div class="message-block odyn">
                 <div class="label">Odyn</div>
         """, unsafe_allow_html=True)
-        st.markdown(msg)
+        st.markdown(msg, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
-
-# ✅ Auto-scroll right after messages are rendered
-st.markdown("""
-    <script>
-        window.scrollTo(0, document.body.scrollHeight);
-    </script>
-""", unsafe_allow_html=True)
 
 # ✏️ Chat Input
 with st.container():
