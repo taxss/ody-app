@@ -3,6 +3,10 @@ from utils.chat_handler import handle_ai_response
 import uuid
 import requests
 
+from utils.theme import apply_theme
+apply_theme()
+
+
 # Page config
 st.set_page_config(page_title="ODYN Ai", layout="centered", initial_sidebar_state="collapsed")
 
