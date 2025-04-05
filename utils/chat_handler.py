@@ -24,7 +24,7 @@ def handle_ai_response():
                 "query": user_query,
                 "session_id": st.session_state.session_id
             },
-            timeout=30
+            timeout=90
         )
 
         # ✅ Remove "Ody is typing..." placeholder if it's still there
