@@ -5,7 +5,7 @@ import uuid
 import requests
 
 # Page config
-st.set_page_config(page_title="ODYN Ai", layout="centered", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="ORYN Ai", layout="centered", initial_sidebar_state="collapsed")
 
 # Apply optional theme switch
 # apply_theme()  # Uncomment if you want the light/dark mode switch
@@ -118,7 +118,7 @@ st.markdown("""
 st.markdown("""
     <div class="app-title">
         <img src="https://images.prismic.io/icelandic/dca19f53-0f5e-4a8c-857e-c4a14211aa40_icelandic_corporate_logo_01.png?auto=compress,format" width="280">
-        <h1 style="color:white;">ODYN Ai</h1>
+        <h1 style="color:white;">ORYN Ai</h1>
     </div>
     <div class="app-subtitle">Know what the state of your stock is.</div>
 """, unsafe_allow_html=True)
@@ -162,7 +162,7 @@ for role, msg in st.session_state.messages:
     elif role == "bot":
         st.markdown(f"""
             <div class="message-block odyn">
-                <div class="label">Odyn</div>
+                <div class="label">Oryn</div>
         """, unsafe_allow_html=True)
         st.markdown(msg, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
