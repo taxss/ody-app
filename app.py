@@ -183,7 +183,7 @@ if submitted and user_input.strip():
 
 # 🤖 Trigger AI
 if st.session_state.is_thinking:
-    with st.spinner("Odyn is thinking..."):
+    with st.spinner("Oryn is thinking..."):
         handle_ai_response()
 
 # ⬇️ Auto Scroll
