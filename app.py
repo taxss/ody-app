@@ -5,7 +5,7 @@ import uuid
 import requests
 
 # Page config
-st.set_page_config(page_title="ODY Ai", layout="centered", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="ORYN Ai", layout="centered", initial_sidebar_state="collapsed")
 
 # Apply optional theme switch
 # apply_theme()  # Uncomment if you want the light/dark mode switch
@@ -117,7 +117,7 @@ st.markdown("""
 # Header
 st.markdown("""
     <div class="app-title">
-        <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.ihcuae.com%2Fhome&psig=AOvVaw2sM9JqWadSk7krB2ae_KY2&ust=1747047398189000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCNjGyu6gm40DFQAAAAAdAAAAABAEt" width="280">
+        <img src="https://images.prismic.io/icelandic/dca19f53-0f5e-4a8c-857e-c4a14211aa40_icelandic_corporate_logo_01.png?auto=compress,format" width="280">
         <h1 style="color:white;">ORYN Ai</h1>
     </div>
     <div class="app-subtitle">Know what the state of your stock is.</div>
@@ -183,7 +183,7 @@ if submitted and user_input.strip():
 
 # 🤖 Trigger AI
 if st.session_state.is_thinking:
-    with st.spinner("Oryn is thinking..."):
+    with st.spinner("Odyn is thinking..."):
         handle_ai_response()
 
 # ⬇️ Auto Scroll
